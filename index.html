@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Humayan Rashid | Full Stack Developer & UI/UX Designer</title>
+    <meta name="description" content="Humayan Rashid is a Full-Stack Developer & UI/UX Architect creating high-performance web apps and modern design systems." />
+    <script>
+      // 1. Ensure modern FormData prototype methods exist to prevent third-party polyfills
+      // (like formdata-polyfill) from executing and attempting to overwrite global fetch.
+      try {
+        if (typeof FormData !== 'undefined' && FormData.prototype) {
+          if (!FormData.prototype.keys) {
+            FormData.prototype.keys = function() {
+              return [].keys();
+            };
+          }
+          if (!FormData.prototype.values) {
+            FormData.prototype.values = function() {
+              return [].values();
+            };
+          }
+          if (!FormData.prototype.entries) {
+            FormData.prototype.entries = function() {
+              return [].entries();
+            };
+          }
+        }
+      } catch (e) {
+        console.warn("Could not verify FormData prototype methods:", e);
+      }
+
+      // 2. Safeguard window.fetch and globalThis.fetch to allow safe fallback assignments (setters)
+      // in environments (like sandboxed development iframes) where fetch might default to a getter-only.
+      try {
+        let currentFetch = window.fetch;
+        if (currentFetch) {
+          const fetchDescriptor = {
+            get() {
+              return currentFetch;
+            },
+            set(v) {
+              currentFetch = v;
+            },
+            configurable: true,
+            enumerable: true
+          };
+
+          try {
+            Object.defineProperty(window, 'fetch', fetchDescriptor);
+          } catch (inner) {
+            // If window itself has non-configurable fetch, attempt on globalThis
+            try {
+              Object.defineProperty(globalThis, 'fetch', fetchDescriptor);
+            } catch (v) {}
+          }
+        }
+      } catch (e) {
+        console.warn("Fetch safeguard initialization bypassed:", e);
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
