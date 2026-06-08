@@ -7,21 +7,23 @@ import {
   User, RefreshCw, Briefcase, Mail, Phone, MapPin, Hash, Globe, Code,
   Upload, Cloud
 } from "lucide-react";
-import { loadCMSData, saveCMSData, resetCMSData } from "../../lib/cmsState";
+import { loadCMSData, saveCMSData, resetCMSData, syncCMSFromSupabase } from "../../lib/cmsState";
 import { CMSData, StatItem, Skill, Service, Project, VideoItem, BlogPost, Testimonial } from "../../types";
+import { uploadImageToSupabase, isSupabaseConfigured } from "../../lib/supabase";
 
 interface FileUploaderProps {
   accept: "image/*" | "video/*";
-  onUpload: (dataUrl: string) => void;
+  onUpload: (url: string) => void;
   label?: string;
+  storageBucket?: string;
 }
 
-function FileUploader({ accept, onUpload, label }: FileUploaderProps) {
+function FileUploader({ accept, onUpload, label, storageBucket }: FileUploaderProps) {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [errorText, setErrorText] = useState("");
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -32,6 +34,23 @@ function FileUploader({ accept, onUpload, label }: FileUploaderProps) {
     }
 
     setLoading(true);
+
+    // If this is an image upload with a storage bucket configured, upload to Supabase
+    if (storageBucket && accept.includes("image") && isSupabaseConfigured()) {
+      try {
+        const publicUrl = await uploadImageToSupabase(file, storageBucket);
+        if (publicUrl) {
+          onUpload(publicUrl);
+          setLoading(false);
+          return;
+        }
+        console.log("[Supabase Upload] Failed, falling back to base64.");
+      } catch (err) {
+        console.error("[Supabase Upload] Error, falling back to base64:", err);
+      }
+    }
+
+    // Fallback: read as data URL
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result === "string") {
@@ -106,6 +125,13 @@ export default function PortfolioCMS({
   const [uploadAboutSuccess, setUploadAboutSuccess] = useState(false);
   const aboutImageInputRef = React.useRef<HTMLInputElement>(null);
 
+  // Sync from Supabase on mount
+  useEffect(() => {
+    syncCMSFromSupabase().then((remoteData) => {
+      setData(remoteData);
+    });
+  }, []);
+
   // Sync state to local storage updates
   const handleSave = () => {
     saveCMSData(data);
@@ -163,76 +189,90 @@ export default function PortfolioCMS({
     setUploadAboutError("");
     setIsUploadingAbout(true);
 
-    const reader = new FileReader();
-    reader.onload = async () => {
-      const dataUrl = reader.result as string;
-      const cloudName = data.settings.cloudinaryCloudName?.trim();
-      const uploadPreset = data.settings.cloudinaryUploadPreset?.trim();
+    const cloudName = data.settings.cloudinaryCloudName?.trim();
+    const uploadPreset = data.settings.cloudinaryUploadPreset?.trim();
 
-      if (cloudName && uploadPreset) {
-        console.log("[CMS Upload About Image] Cloudinary configuration detected. Cloud Name:", cloudName, "Upload Preset:", uploadPreset, "- Initializing network request...");
-        try {
-          const formData = new FormData();
-          formData.append("file", file);
-          formData.append("upload_preset", uploadPreset);
+    // Try Cloudinary first if configured
+    if (cloudName && uploadPreset) {
+      console.log("[CMS Upload About Image] Cloudinary configuration detected. Cloud Name:", cloudName, "Upload Preset:", uploadPreset, "- Initializing network request...");
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", uploadPreset);
 
-          const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-            method: "POST",
-            body: formData
-          });
+        const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+          method: "POST",
+          body: formData
+        });
 
-          if (!response.ok) {
-            const errorMsg = await response.text();
-            throw new Error(errorMsg || `HTTP ${response.status}`);
-          }
+        if (!response.ok) {
+          const errorMsg = await response.text();
+          throw new Error(errorMsg || `HTTP ${response.status}`);
+        }
 
-          const responseJson = await response.json();
-          if (responseJson.secure_url) {
-            console.log("[CMS Upload About Image] Cloudinary CDN upload success! Active URL:", responseJson.secure_url);
-            updateAbout("profileImage", responseJson.secure_url);
-            // Auto-save to localStorage so homepage reflects the change immediately
-            const updatedDataCdn = { ...data, about: { ...data.about, profileImage: responseJson.secure_url } };
-            saveCMSData(updatedDataCdn);
-            console.log("[CMS Auto-Save] About profile image (Cloudinary) auto-saved to localStorage.");
-            setUploadAboutSuccess(true);
-            setTimeout(() => setUploadAboutSuccess(false), 3000);
-          } else {
-            throw new Error("Secure URL not found in Cloudinary response");
-          }
-        } catch (err: any) {
-          console.error("[CMS Upload About Image] Cloudinary CDN upload failed:", err);
-          setUploadAboutError(`Cloudinary CDN upload failed (${err.message || err}). Safe-saved image locally as Base64 format instead.`);
-          
-          console.log("[CMS Upload About Image] Safe-saving locally as Base64 string fallback...");
-          updateAbout("profileImage", dataUrl);
-          // Auto-save fallback to localStorage
-          const updatedDataFallback = { ...data, about: { ...data.about, profileImage: dataUrl } };
-          saveCMSData(updatedDataFallback);
-          console.log("[CMS Auto-Save] About profile image (base64 fallback) auto-saved to localStorage.");
-        } finally {
+        const responseJson = await response.json();
+        if (responseJson.secure_url) {
+          console.log("[CMS Upload About Image] Cloudinary CDN upload success! Active URL:", responseJson.secure_url);
+          updateAbout("profileImage", responseJson.secure_url);
+          const updatedDataCdn = { ...data, about: { ...data.about, profileImage: responseJson.secure_url } };
+          saveCMSData(updatedDataCdn);
+          console.log("[CMS Auto-Save] About profile image (Cloudinary) auto-saved to localStorage.");
+          setUploadAboutSuccess(true);
+          setTimeout(() => setUploadAboutSuccess(false), 3000);
           setIsUploadingAbout(false);
           if (aboutImageInputRef.current) aboutImageInputRef.current.value = "";
+          return;
+        } else {
+          throw new Error("Secure URL not found in Cloudinary response");
         }
-      } else {
-        console.log("[CMS Upload About Image] Cloudinary config missing or empty (using Local Session Storage mode). Storing raw base64 string...");
-        updateAbout("profileImage", dataUrl);
-        // Auto-save to localStorage so homepage reflects the change immediately
-        const updatedDataLocal = { ...data, about: { ...data.about, profileImage: dataUrl } };
-        saveCMSData(updatedDataLocal);
-        console.log("[CMS Auto-Save] About profile image (base64 local) auto-saved to localStorage. Length:", dataUrl.length);
-        setIsUploadingAbout(false);
-        setUploadAboutSuccess(true);
-        setTimeout(() => setUploadAboutSuccess(false), 3000);
-        if (aboutImageInputRef.current) aboutImageInputRef.current.value = "";
+      } catch (err: any) {
+        console.error("[CMS Upload About Image] Cloudinary CDN upload failed:", err);
+        setUploadAboutError(`Cloudinary CDN upload failed (${err.message || err}). Trying Supabase Storage...`);
       }
-    };
+    }
 
+    // Try Supabase Storage if configured
+    if (isSupabaseConfigured()) {
+      try {
+        const publicUrl = await uploadImageToSupabase(file, "cms-images");
+        if (publicUrl) {
+          console.log("[CMS Upload About Image] Supabase Storage upload success! Active URL:", publicUrl);
+          updateAbout("profileImage", publicUrl);
+          const updatedDataSp = { ...data, about: { ...data.about, profileImage: publicUrl } };
+          saveCMSData(updatedDataSp);
+          console.log("[CMS Auto-Save] About profile image (Supabase) auto-saved.");
+          setUploadAboutSuccess(true);
+          setTimeout(() => setUploadAboutSuccess(false), 3000);
+          setIsUploadingAbout(false);
+          if (aboutImageInputRef.current) aboutImageInputRef.current.value = "";
+          return;
+        }
+        console.log("[CMS Upload About Image] Supabase upload returned null, falling back to base64.");
+      } catch (err: any) {
+        console.error("[CMS Upload About Image] Supabase Storage upload failed:", err);
+        setUploadAboutError(`Supabase upload failed (${err.message || err}). Falling back to base64.`);
+      }
+    }
+
+    // Fallback: base64 localStorage
+    console.log("[CMS Upload About Image] Using base64 localStorage fallback.");
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      updateAbout("profileImage", dataUrl);
+      const updatedDataLocal = { ...data, about: { ...data.about, profileImage: dataUrl } };
+      saveCMSData(updatedDataLocal);
+      console.log("[CMS Auto-Save] About profile image (base64 local) auto-saved. Length:", dataUrl.length);
+      setIsUploadingAbout(false);
+      setUploadAboutSuccess(true);
+      setTimeout(() => setUploadAboutSuccess(false), 3000);
+      if (aboutImageInputRef.current) aboutImageInputRef.current.value = "";
+    };
     reader.onerror = () => {
-      console.error("[CMS Upload About Image] Selected file reader encounter read error.");
+      console.error("[CMS Upload About Image] File reader encountered read error.");
       setUploadAboutError("Failed to read user selected file from local device.");
       setIsUploadingAbout(false);
     };
-
     reader.readAsDataURL(file);
   };
 
@@ -732,6 +772,7 @@ export default function PortfolioCMS({
                   </div>
                   <FileUploader
                     accept="image/*"
+                    storageBucket="cms-images"
                     onUpload={(url) => {
                       updateHero("avatar", url);
                       // Auto-save to localStorage so homepage reflects the change immediately
@@ -1099,6 +1140,7 @@ export default function PortfolioCMS({
                           </div>
                           <FileUploader
                             accept="image/*"
+                            storageBucket="cms-images"
                             onUpload={(url) => {
                               handleTestimonialChange(t.id, "avatar", url);
                               // Auto-save to localStorage so homepage reflects the change immediately
@@ -1450,6 +1492,7 @@ export default function PortfolioCMS({
                         </div>
                         <FileUploader
                           accept="image/*"
+                          storageBucket="cms-images"
                           onUpload={(url) => handleProjectChange(proj.id, "image", url)}
                           label="Upload Poster Cover from PC"
                         />
@@ -1631,6 +1674,7 @@ export default function PortfolioCMS({
                       </div>
                       <FileUploader
                         accept="image/*"
+                        storageBucket="cms-images"
                         onUpload={(url) => handleVideoChange(vid.id, "thumbnail", url)}
                         label="Upload Thumbnail Image from PC"
                       />
@@ -1788,6 +1832,7 @@ export default function PortfolioCMS({
                         </div>
                         <FileUploader
                           accept="image/*"
+                          storageBucket="cms-images"
                           onUpload={(url) => handleBlogChange(b.id, "image", url)}
                           label="Upload Image from PC"
                         />
@@ -1942,6 +1987,7 @@ export default function PortfolioCMS({
                   </div>
                   <FileUploader
                     accept="image/*"
+                    storageBucket="cms-images"
                     onUpload={(url) => updateSettings("faviconUrl", url)}
                     label="Upload Favicon from PC"
                   />
@@ -1959,6 +2005,7 @@ export default function PortfolioCMS({
                   </div>
                   <FileUploader
                     accept="image/*"
+                    storageBucket="cms-images"
                     onUpload={(url) => updateSettings("logoUrl", url)}
                     label="Upload Logo from PC"
                   />

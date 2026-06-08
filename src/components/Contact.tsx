@@ -39,7 +39,8 @@ export default function Contact({ data, openBookingModal }: ContactProps) {
     {
       id: "hours",
       label: "24/7 Hours Call handling",
-      link: "#",
+      link: "",
+      staticOnly: true,
       icon: <Clock size={14} className="text-[#061910]" />
     },
     {
@@ -113,6 +114,18 @@ export default function Contact({ data, openBookingModal }: ContactProps) {
                   >
                     {Content}
                   </button>
+                );
+              }
+
+              if (capsule.staticOnly) {
+                return (
+                  <div
+                    key={capsule.id}
+                    className="w-full group bg-[#0a291b]/50 border border-white/5 rounded-full p-2 flex items-center gap-3 sm:gap-3.5 shadow-md min-h-[44px] cursor-default"
+                    title="24/7 availability indicator"
+                  >
+                    {Content}
+                  </div>
                 );
               }
 

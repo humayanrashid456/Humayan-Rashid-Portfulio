@@ -1,247 +1,247 @@
-import React, { useState } from "react";
-import { motion } from "motion/react";
-import { ArrowRight, ArrowUpRight, RotateCw } from "lucide-react";
-import { TypeAnimation } from "react-type-animation";
+import React from "react";
+import { motion } from "framer-motion";
 import { HeroSection } from "../types";
-
-// Dynamic video resolver supporting local files, Base64 data URLs, custom media paths, and YouTube links/IDs
-export function getVideoSource(idOrUrl: string): { isYoutube: boolean; src: string } {
-  if (!idOrUrl) {
-    return { isYoutube: true, src: "dQw4w9WgXcQ" };
-  }
-  
-  const trimmed = idOrUrl.trim();
-
-  // If it's a Base64 data URL, blob, or generic direct file signature
-  if (
-    trimmed.startsWith("data:") || 
-    trimmed.startsWith("blob:") || 
-    trimmed.endsWith(".mp4") || 
-    trimmed.endsWith(".webm") || 
-    trimmed.endsWith(".ogg")
-  ) {
-    return { isYoutube: false, src: trimmed };
-  }
-
-  // Matches YouTube URLs to extract the actual 11-char ID safely
-  const ytMatch = trimmed.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
-  if (ytMatch && ytMatch[1]) {
-    return { isYoutube: true, src: ytMatch[1] };
-  }
-
-  // If it looks like an ID with no special path symbols
-  if (trimmed.length === 11 && !trimmed.includes("/") && !trimmed.includes(".")) {
-    return { isYoutube: true, src: trimmed };
-  }
-
-  // External video file linked directly (fallback to direct player if it's standard HTTP/S link)
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
-    return { isYoutube: false, src: trimmed };
-  }
-
-  return { isYoutube: true, src: trimmed };
-}
+import {
+  Play, Monitor, Search, MapPin, Settings, Tag,
+  CheckCircle2, Phone,
+  Award, Globe, LineChart, MessageSquare,
+  Clock, PhoneCall, Target, Shield, ArrowRight, Star
+} from "lucide-react";
 
 interface HeroProps {
   openBookingModal: () => void;
   data?: HeroSection;
 }
 
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  show: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.1, duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+  }),
+};
+
 export default function Hero({ openBookingModal, data }: HeroProps) {
-  const [spin, setSpin] = useState(false);
+  const introVideoUrl = data?.introVideoUrl;
+  const videoThumbnail = "/src/assets/images/video_banner.jpg";
 
-  const heroDesc = data?.shortDesc || "Boost your business with tested online methods. Get more customers, increase sales, and stand out online—naturally and effectively. Let's grow together!";
-  const ctaText = data?.ctaPrimaryText || "Get free Consultation";
-
-  const services = ["Custom Websites", "AI Agents", "Marketing Systems"];
-
-  const triggerSpin = () => {
-    setSpin(true);
-    setTimeout(() => setSpin(false), 600);
-  };
-
-return (
+  return (
     <section
       id="home"
-      className="relative pt-24 sm:pt-28 md:pt-32 lg:pt-40 pb-14 sm:pb-16 md:pb-20 lg:pb-24 overflow-hidden bg-gradient-to-br from-[#061910] to-[#0b2b1d] text-white transition-colors duration-300"
+      className="relative pt-24 sm:pt-28 md:pt-32 lg:pt-36 pb-14 sm:pb-20 bg-[#061910] text-white overflow-hidden min-h-[92vh] flex flex-col justify-center"
     >
-      {/* Ambient gradients and concentric rings */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none flex items-center justify-center">
-        <div className="absolute w-[800px] h-[800px] sm:w-[1200px] sm:h-[1200px] rounded-full bg-[radial-gradient(circle,rgba(203,243,65,0.08)_0%,rgba(6,25,16,0)_65%)] sm:block hidden" />
-        <div className="absolute w-[300px] h-[300px] sm:hidden border border-[#cbf341]/10" />
-        <div className="absolute w-[400px] h-[400px] sm:w-[600px] sm:h-[600px] rounded-full border border-[#cbf341]/10 sm:block hidden" />
-        <div className="absolute w-[500px] h-[500px] sm:w-[700px] sm:h-[700px] rounded-full border border-[#cbf341]/10 sm:block hidden" />
+      {/* Ambient background blobs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-[700px] h-[700px] rounded-full bg-[radial-gradient(circle,rgba(203,243,65,0.06)_0%,rgba(6,25,16,0)_70%)]" />
+        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-[radial-gradient(circle,rgba(203,243,65,0.04)_0%,rgba(6,25,16,0)_70%)]" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="flex flex-col items-center text-center">
-          
-          {/* Badge Tag */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#122e20]/65 border border-white/5 text-[#cbf341] text-[11px] sm:text-xs lg:text-[13px] font-semibold tracking-wide mb-5 sm:mb-6 backdrop-blur-md"
-          >
-            <span>We are world top marketing agency</span>
-          </motion.div>
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
 
-          {/* Heading — Premium editorial serif, primary visual focus */}
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-            className="font-display font-black tracking-tight text-white text-[26px] sm:text-3xl md:text-4xl lg:text-5xl xl:text-[48px] leading-[1.15] max-w-full sm:max-w-4xl px-2 sm:px-4"
-          >
-            Humayan Helps Businesses
-          </motion.h1>
+        {/* ─── Main 2-Column Layout ─── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 items-start gap-y-12 lg:gap-x-[100px]">
 
-          {/* Subheading — static "Grow With →" (editorial serif) */}
+          {/* ── Left: Video Card (Col 5) ── */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="mt-5 sm:mt-7 flex items-center justify-center gap-x-3 text-white font-editorial font-bold tracking-tight text-2xl sm:text-3xl md:text-4xl lg:text-5xl leading-[1.1]"
+            className="lg:col-span-5 relative w-full"
+            initial="hidden"
+            animate="show"
+            variants={fadeUp}
+            custom={0}
           >
-            <span className="whitespace-nowrap">Grow With</span>
-            <ArrowRight
-              aria-hidden="true"
-              className="w-[0.6em] h-[0.6em] -mb-[0.1em] text-white"
-              strokeWidth={2}
-            />
-          </motion.div>
+            <div className="bg-gradient-to-br from-[#0a2618] to-[#071c12] rounded-2xl border border-white/5 shadow-2xl shadow-[#cbf341]/5 overflow-hidden w-full">
 
-          {/* Typing animation — gradient, centered, no layout shift */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="mt-2 sm:mt-3 font-display font-bold tracking-tight text-base sm:text-lg md:text-xl lg:text-2xl leading-tight"
-          >
-            <span
-              className="inline-grid justify-items-center"
-              style={{ gridTemplateColumns: "minmax(0, 1fr)" }}
-            >
-              <span
-                aria-hidden="true"
-                className="invisible whitespace-nowrap pointer-events-none select-none"
-                style={{ gridArea: "1 / 1" }}
+              {/* Video Container */}
+              <div
+                className="relative aspect-video w-full bg-[#05110b] cursor-pointer group"
+                onClick={() => alert("Play Video clicked! Check the console for the video link.")}
               >
-                Marketing Systems
-              </span>
-              <span
-                className="flex items-baseline justify-center whitespace-nowrap"
-                style={{ gridArea: "1 / 1" }}
+                {/* Intro Video Pulse Badge */}
+                <div className="absolute top-4 left-4 z-20 flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
+                  <span className="w-2 h-2 rounded-full bg-[#cbf341] animate-pulse" />
+                  <span className="text-[10px] font-bold text-white tracking-widest uppercase">Intro Video</span>
+                </div>
+
+                {/* Video Player */}
+                <div className="absolute inset-0 w-full h-full overflow-hidden">
+                  {introVideoUrl ? (
+                    (() => {
+                      const isYoutube = introVideoUrl.includes("youtube.com") || introVideoUrl.includes("youtu.be");
+                      if (isYoutube) {
+                        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+                        const match = introVideoUrl.match(regExp);
+                        const videoId = (match && match[2].length === 11) ? match[2] : "";
+                        if (videoId) {
+                          return (
+                            <iframe
+                              src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&playsinline=1&modestbranding=1&rel=0&showinfo=0`}
+                              className="w-full h-[140%] -translate-y-[20%] object-cover pointer-events-none opacity-80"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                            />
+                          );
+                        }
+                      }
+                      return (
+                        <video
+                          src={introVideoUrl}
+                          autoPlay muted loop playsInline
+                          className="w-full h-full object-contain opacity-90"
+                          poster={videoThumbnail}
+                        />
+                      );
+                    })()
+                  ) : (
+                    <img src={videoThumbnail} alt="Thumbnail" className="w-full h-full object-contain opacity-90" />
+                  )}
+                </div>
+
+                {/* Play Button Overlay */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center z-10 bg-black/20 group-hover:bg-black/40 transition-colors duration-300">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-[3px] border-white flex items-center justify-center backdrop-blur-sm group-hover:scale-110 transition-transform duration-300 shadow-xl shadow-black/50">
+                    <Play size={28} className="fill-[#cbf341] text-[#cbf341] ml-1.5" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Tabs */}
+              <div
+                className="px-4 py-4 bg-[#05110b] flex items-center justify-between border-t border-white/5 overflow-x-auto gap-4"
+                style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
               >
-                <TypeAnimation
-                    sequence={services.flatMap((s) => [s, 1800])}
-                    wrapper="span"
-                    cursor={false}
-                    speed={55}
-                    deletionSpeed={45}
-                    repeat={Infinity}
-                    className="!inline-block !m-0 !p-0 whitespace-nowrap align-baseline font-extrabold"
-                    style={{
-                      backgroundImage:
-                        "linear-gradient(90deg, #ff8a3d 0%, #ff4d8d 50%, #a855f7 100%)",
-                      WebkitBackgroundClip: "text",
-                      backgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      color: "transparent",
-                      fontWeight: 800,
-                    }}
-                  />
-                <span
-                  aria-hidden="true"
-                  className="ml-1 inline-block h-[0.85em] w-[3px] translate-y-[0.1em] rounded-sm"
-                  style={{
-                    background:
-                      "linear-gradient(180deg, #ff8a3d 0%, #ff4d8d 50%, #a855f7 100%)",
-                    animation: "rtb-cursor-blink 1s steps(1) infinite",
-                  }}
-                />
-              </span>
-            </span>
-          </motion.div>
-          
-          {/* Description */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-white/70 text-[13px] sm:text-base md:text-base leading-relaxed mt-5 sm:mt-6 px-3 sm:px-4 max-w-full sm:max-w-2xl"
-          >
-            {heroDesc}
-          </motion.p>
-
-          {/* CTA Button */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="mt-7 sm:mt-8 px-4 sm:px-8"
-          >
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={openBookingModal}
-              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full border-2 border-[#cbf341] bg-transparent hover:bg-[#cbf341] text-white hover:text-[#061910] font-bold text-sm sm:text-sm tracking-wider shadow-xl shadow-[#cbf341]/10 transition-all cursor-pointer active:scale-95"
-            >
-              <ArrowUpRight size={15} strokeWidth={2.5} />
-              <span>{ctaText}</span>
-            </motion.button>
-          </motion.div>
-
-          {/* Partners Board */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="w-full px-4 mt-12 sm:mt-16 lg:mt-20 relative border border-white/10 bg-[#122e20]/25 backdrop-blur-md rounded-[24px] py-7 sm:py-8 lg:py-9 px-4 sm:px-6 lg:px-12 flex flex-col items-center justify-center max-w-5xl sm:max-w-6xl lg:max-w-4xl mx-auto"
-          >
-            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-[#122e20]/90 border border-white/10 text-[10px] sm:text-xs font-medium text-white/80 flex items-center gap-2 whitespace-nowrap shadow-lg backdrop-blur-md justify-center">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#cbf341]" />
-              <span>Trusted by top companies worldwide</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-[#cbf341]" />
-            </div>
-
-            {/* Partners */}
-            <div className="flex flex-wrap items-center justify-center gap-x-6 sm:gap-x-10 md:gap-x-12 gap-y-4 sm:gap-y-5 lg:gap-y-6 w-full text-white/60 select-none px-2 sm:px-4 mt-2">
-              <div className="flex items-center gap-1.5 hover:text-white transition-colors cursor-default">
-                <span className="font-serif font-black text-lg sm:text-xl tracking-tight">Brandora</span>
-              </div>
-              <div className="flex items-center gap-1.5 hover:text-white transition-colors cursor-default">
-                <div className="w-4 h-4 rounded-full border-2 border-white/60 flex items-center justify-center text-[7px] font-bold text-white/60 leading-none">L</div>
-                <span className="font-sans font-bold text-base sm:text-lg tracking-wide">Lumovia</span>
-              </div>
-              <div className="flex items-center hover:text-white transition-colors cursor-default">
-                <span className="font-sans font-black tracking-widest text-sm sm:text-base">MARKABLY</span>
-              </div>
-              <div className="flex items-center gap-1.5 hover:text-white transition-colors cursor-default">
-                <svg className="w-5 h-5 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-white/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                </svg>
-                <span className="font-display font-extrabold text-base sm:text-lg tracking-wider">Nexora</span>
-              </div>
-              <div className="flex items-center hover:text-white transition-colors cursor-default">
-                <span className="font-serif italic font-semibold text-base sm:text-lg tracking-tight">Adthentic</span>
-              </div>
-              <div className="flex items-center gap-1 hover:text-white transition-colors cursor-default">
-                <span className="font-sans font-black text-base sm:text-lg">Optivise</span>
+                {[
+                  { icon: Monitor, label: "WEBSITES" },
+                  { icon: Search, label: "SEO" },
+                  { icon: MapPin, label: "LOCAL SEO" },
+                  { icon: Settings, label: "AUTOMATION" },
+                  { icon: Tag, label: "BRANDING" },
+                ].map((tab, i) => (
+                  <div key={i} className="flex flex-col items-center gap-1.5 min-w-fit opacity-60 hover:opacity-100 transition-opacity cursor-pointer">
+                    <tab.icon size={18} className="text-[#cbf341]" />
+                    <span className="text-[10px] font-bold tracking-widest text-white uppercase">{tab.label}</span>
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Refresh button */}
-            <button
-              onClick={triggerSpin}
-              className="absolute -bottom-5 left-1/2 -translate-x-1/2 w-11 h-11 sm:w-10 sm:h-10 rounded-full bg-[#cbf341] text-[#061910] hover:bg-[#b2d932] shadow-lg shadow-[#cbf341]/25 flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer z-20"
-              aria-label="Refresh partners"
+            {/* Caption below video */}
+            <div className="mt-4 flex items-center gap-2 opacity-50 ml-2">
+              <Clock size={14} />
+              <span className="text-sm">90 Second Introduction</span>
+            </div>
+          </motion.div>
+
+          {/* ── Right: Hero Content (Col 7) ── */}
+          <motion.div
+            className="lg:col-span-7 flex flex-col justify-center"
+            initial="hidden"
+            animate="show"
+            variants={fadeUp}
+            custom={1}
+          >
+
+
+            {/* Headline */}
+            <motion.h1
+              variants={fadeUp}
+              custom={3}
+              className="text-4xl sm:text-5xl lg:text-6xl xl:text-[64px] font-black leading-[1.08] tracking-tight text-white mb-5"
             >
-              <RotateCw size={16} strokeWidth={2} className={`transition-transform duration-500 ${spin ? "rotate-180" : ""}`} />
-            </button>
+              Hi, I'm{" "}
+              <span className="text-[#cbf341] relative">
+                Humayan Rashid.
+                <span className="absolute -bottom-1 left-0 w-full h-[3px] bg-gradient-to-r from-[#cbf341]/60 to-transparent rounded-full" />
+              </span>
+            </motion.h1>
+
+            {/* Sub-headline */}
+            <motion.p
+              variants={fadeUp}
+              custom={4}
+              className="text-base sm:text-lg text-zinc-300 mb-8 max-w-xl leading-relaxed"
+            >
+              Helping USA Local Businesses grow through high-converting{" "}
+              <span className="text-white font-semibold">Web Design</span>,{" "}
+              <span className="text-white font-semibold">SEO</span> &amp;{" "}
+              <span className="text-white font-semibold">Automation</span> — so you get more calls, leads and revenue.
+            </motion.p>
+
+            {/* Feature checklist */}
+            <motion.div
+              variants={fadeUp}
+              custom={5}
+              className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6 mb-8"
+            >
+              {[
+                "High Converting Websites",
+                "Automation & Funnels",
+                "SEO & Local SEO",
+                "Ongoing Growth Support",
+              ].map((item, i) => (
+                <div key={i} className="flex items-start gap-2.5">
+                  <CheckCircle2 size={18} className="text-[#cbf341] shrink-0 mt-0.5" />
+                  <span className="text-sm sm:text-base text-zinc-200 font-medium leading-tight">{item}</span>
+                </div>
+              ))}
+            </motion.div>
+
+
+
+            {/* CTA Buttons */}
+            <motion.div variants={fadeUp} custom={7} className="flex flex-wrap items-center gap-4">
+              <button
+                onClick={openBookingModal}
+                className="bg-[#cbf341] hover:bg-[#b5da3a] text-[#061910] px-7 sm:px-9 py-4 rounded-xl font-black text-sm sm:text-base flex items-center gap-2 transition-all hover:scale-[1.03] shadow-lg shadow-[#cbf341]/20 w-full sm:w-auto justify-center"
+              >
+                <Phone size={18} className="fill-current" />
+                Book A Free Strategy Call
+              </button>
+
+              <button
+                onClick={() => document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" })}
+                className="flex items-center gap-2 px-5 py-4 rounded-xl font-bold text-sm sm:text-base text-zinc-300 hover:text-white border border-white/10 hover:border-white/20 transition-all duration-200 w-full sm:w-auto justify-center"
+              >
+                View My Work
+                <ArrowRight size={16} />
+              </button>
+            </motion.div>
+
+
           </motion.div>
 
         </div>
+
+        {/* ─── Bottom Trust Bar ─── */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.9, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-16 sm:mt-20 bg-[#081d13] border border-white/5 rounded-2xl px-6 py-6 shadow-xl"
+        >
+          <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center sm:justify-between gap-6 text-sm text-zinc-300">
+            {[
+              { icon: Clock, text: "USA Time Zone Support" },
+              { icon: PhoneCall, text: "Fast Response" },
+              { icon: Target, text: "100% Focus on Results" },
+              { icon: Shield, text: "Trusted by Local Businesses" },
+            ].map((item, i) => (
+              <div key={i} className="flex items-center gap-3">
+                <item.icon size={20} className="text-[#cbf341] shrink-0" />
+                <span className="font-medium text-white">{item.text}</span>
+                {i < 3 && <div className="hidden sm:block w-px h-6 bg-white/10 ml-6" />}
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Footer subtle text */}
+        <div className="mt-10 flex items-center justify-center gap-4 opacity-60">
+          <div className="h-px w-24 bg-gradient-to-r from-transparent to-[#cbf341]/50" />
+          <span className="text-[10px] font-bold text-[#cbf341] uppercase tracking-widest">RESULTS THAT MATTER</span>
+          <div className="h-px w-24 bg-gradient-to-l from-transparent to-[#cbf341]/50" />
+        </div>
+
       </div>
     </section>
   );

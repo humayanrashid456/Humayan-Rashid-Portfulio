@@ -1,5 +1,6 @@
 import { CMSData, Project, Testimonial } from "../types";
 import { PERSONAL_INFO, STATS, SKILLS, SERVICES, BLOGS, VIDEOS } from "../data";
+import { supabase, isSupabaseConfigured } from "./supabase";
 
 // Pre-packaged gorgeous testimonials
 const DEFAULT_TESTIMONIALS: Testimonial[] = [
@@ -122,55 +123,113 @@ export const DEFAULT_CMS_DATA: CMSData = {
 };
 
 const LOCAL_STORAGE_KEY = "portfolio_cms_payload";
+const CMS_SINGLETON_ID = 1;
 
-// Safe JSON loader
+// Module-level cache for synchronous access
+let cmsCache: CMSData | null = null;
+
+function patchData(parsed: Partial<CMSData>): CMSData {
+  return {
+    ...DEFAULT_CMS_DATA,
+    ...parsed,
+    hero: { ...DEFAULT_CMS_DATA.hero, ...parsed.hero },
+    about: { ...DEFAULT_CMS_DATA.about, ...parsed.about },
+    contact: { ...DEFAULT_CMS_DATA.contact, ...parsed.contact },
+    footer: { ...DEFAULT_CMS_DATA.footer, ...parsed.footer },
+    settings: { ...DEFAULT_CMS_DATA.settings, ...parsed.settings }
+  };
+}
+
+// Async: load CMS data from Supabase, fall back to localStorage
+export async function syncCMSFromSupabase(): Promise<CMSData> {
+  if (!isSupabaseConfigured()) {
+    console.log("[CMS Supabase] Supabase not configured, using localStorage.");
+    return loadCMSData();
+  }
+
+  try {
+    const { data: row, error } = await supabase!
+      .from("cms_data")
+      .select("data")
+      .eq("id", CMS_SINGLETON_ID)
+      .single();
+
+    if (error || !row) {
+      console.log("[CMS Supabase] No data found or error:", error?.message || "empty row");
+      return loadCMSData();
+    }
+
+    const patched = patchData(row.data as Partial<CMSData>);
+    cmsCache = patched;
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(patched));
+    console.log("[CMS Supabase] Synced from Supabase successfully.");
+    return patched;
+  } catch (err) {
+    console.error("[CMS Supabase] Sync error:", err);
+    return loadCMSData();
+  }
+}
+
+// Safe JSON loader (synchronous — reads from cache or localStorage)
 export function loadCMSData(): CMSData {
+  if (cmsCache) return cmsCache;
+
   try {
     const serialized = localStorage.getItem(LOCAL_STORAGE_KEY);
     console.log("[CMS Load] Loading CMS data state. Serialized payload detected:", serialized ? "YES" : "NO");
     if (!serialized) {
       console.log("[CMS Load] Fetching default CMS state as fallback:", DEFAULT_CMS_DATA.about.profileImage);
+      cmsCache = DEFAULT_CMS_DATA;
       return DEFAULT_CMS_DATA;
     }
     const parsed = JSON.parse(serialized);
-    
-    // Perform automatic schema patching to ensure robustness if types change
-    const patchedData = {
-      ...DEFAULT_CMS_DATA,
-      ...parsed,
-      hero: { ...DEFAULT_CMS_DATA.hero, ...parsed.hero },
-      about: { ...DEFAULT_CMS_DATA.about, ...parsed.about },
-      contact: { ...DEFAULT_CMS_DATA.contact, ...parsed.contact },
-      footer: { ...DEFAULT_CMS_DATA.footer, ...parsed.footer },
-      settings: { ...DEFAULT_CMS_DATA.settings, ...parsed.settings }
-    };
+    const patchedData = patchData(parsed);
     console.log("[CMS Load] Patched & structured CMS active state successfully! About Image URL:", patchedData.about.profileImage || "None (Using static fallback)");
+    cmsCache = patchedData;
     return patchedData;
   } catch (err) {
     console.error("[CMS Load Error] Failed to load CMS data from localStorage:", err);
+    cmsCache = DEFAULT_CMS_DATA;
     return DEFAULT_CMS_DATA;
   }
 }
 
-// Safe JSON saver
+// Safe JSON saver – saves to localStorage (sync) + Supabase (async)
 export function saveCMSData(data: CMSData): void {
+  cmsCache = data;
+
   try {
     console.log("[CMS Save] Storing updated CMS payload to localStorage. Details - About Image URL:", data.about.profileImage || "None");
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
     console.log("[CMS Save] Success! Data stored safely. Dispatching change notification events across channels...");
-    
-    // Trigger custom event to notify other mounted components in the application in real-time
-    // We dispatch both formats to ensure absolutely clean execution on all event targets.
-    window.dispatchEvent(new Event("portfolio_cms_update"));
-    window.dispatchEvent(new Event("portfolio-cms-update"));
-    console.log("[CMS Save] Synchronization custom window dispatch complete.");
   } catch (err) {
     console.error("[CMS Save Error] Failed to save CMS data to localStorage:", err);
   }
+
+  // Persist to Supabase asynchronously
+  if (isSupabaseConfigured()) {
+    supabase!
+      .from("cms_data")
+      .upsert(
+        { id: CMS_SINGLETON_ID, data, updated_at: new Date().toISOString() },
+        { onConflict: "id" }
+      )
+      .then(({ error }) => {
+        if (error) console.error("[CMS Supabase] Save error:", error.message);
+        else console.log("[CMS Supabase] Data saved successfully.");
+      });
+  }
+
+  // Trigger custom event to notify other mounted components in the application in real-time
+  // We dispatch both formats to ensure absolutely clean execution on all event targets.
+  window.dispatchEvent(new Event("portfolio_cms_update"));
+  window.dispatchEvent(new Event("portfolio-cms-update"));
+  console.log("[CMS Save] Synchronization custom window dispatch complete.");
 }
 
-// Reset state
+// Reset state – resets in localStorage + Supabase
 export function resetCMSData(): CMSData {
+  cmsCache = DEFAULT_CMS_DATA;
   saveCMSData(DEFAULT_CMS_DATA);
   return DEFAULT_CMS_DATA;
 }

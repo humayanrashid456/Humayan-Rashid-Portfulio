@@ -25,21 +25,21 @@ export default function Footer({ data, contactData }: { data?: FooterSection; co
     { label: "Home", href: "#home" },
     { label: "About Us", href: "#about" },
     { label: "Portfolio", href: "#portfolio" },
-    { label: "Pricing", href: "#" },
+    { label: "Pricing", href: "#contact" },
     { label: "Blogs", href: "#blog" },
   ];
 
   const supportLinks = [
-    { label: "Teams", href: "#" },
+    { label: "Teams", href: "#about" },
     { label: "Services", href: "#services" },
     { label: "Contact us", href: "#contact" },
   ];
 
   const utilitiesLinks = [
-    { label: "Style Guide", href: "#" },
-    { label: "Instructions", href: "#" },
-    { label: "Licenses", href: "#" },
-    { label: "Change Log", href: "#" },
+    { label: "Style Guide", href: "", staticOnly: true },
+    { label: "Instructions", href: "", staticOnly: true },
+    { label: "Licenses", href: "", staticOnly: true },
+    { label: "Change Log", href: "", staticOnly: true },
   ];
 
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
@@ -74,10 +74,10 @@ export default function Footer({ data, contactData }: { data?: FooterSection; co
           id="floating-contact-bar"
           className="relative lg:absolute -mb-8 lg:mb-0 lg:-top-[60px] lg:left-1/2 lg:-translate-x-1/2 w-full lg:w-[95%] xl:w-[90%] z-20 bg-[#214332] rounded-3xl py-6 px-5 sm:px-8 lg:px-10 shadow-xl border border-white/5"
         >
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 lg:gap-4 items-center">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 lg:gap-4 items-center">
 
             {/* Column 1: Logo - full width centered on mobile */}
-            <div className="col-span-2 lg:col-span-1 flex items-center gap-3 justify-center lg:justify-start lg:border-r border-white/10 pb-5 lg:pb-0 lg:pr-6 border-b lg:border-b-0">
+            <div className="col-span-1 sm:col-span-2 lg:col-span-1 flex items-center gap-3 justify-center lg:justify-start lg:border-r border-white/10 pb-5 lg:pb-0 lg:pr-6 border-b lg:border-b-0">
               <div className="relative w-10 h-10 text-[#cbf341] shrink-0">
                 <svg className="w-full h-full" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                   <path d="M 30.6 9.4 A 15 15 0 1 0 30.6 29.6" />
@@ -123,7 +123,7 @@ export default function Footer({ data, contactData }: { data?: FooterSection; co
             </div>
 
             {/* Column 4: Address - full width centered on mobile */}
-            <div className="col-span-2 lg:col-span-1 flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-center sm:text-left pt-5 lg:pt-0 border-t lg:border-t-0 border-white/10 lg:px-6 min-w-0 overflow-hidden">
+            <div className="col-span-1 sm:col-span-2 lg:col-span-1 flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-center sm:text-left pt-5 lg:pt-0 border-t lg:border-t-0 border-white/10 lg:px-6 min-w-0 overflow-hidden">
               <div className="w-9 h-9 rounded-lg border border-[#cbf341]/30 flex items-center justify-center text-[#cbf341] shrink-0 bg-[#0a291b]/30">
                 <MapPin size={16} strokeWidth={2} />
               </div>
@@ -195,69 +195,59 @@ export default function Footer({ data, contactData }: { data?: FooterSection; co
                 </h4>
                 <div className="flex gap-2.5 justify-center lg:justify-start">
                   {/* Instagram */}
-                  <a
-                    href="#"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="w-9 h-9 rounded-full bg-[#0b251e] border border-white/10 text-zinc-400 hover:text-[#0b2e24] hover:bg-[#cbf341] hover:border-[#cbf341] flex items-center justify-center transition-all duration-300 cursor-pointer shadow-sm"
-                    aria-label="Instagram"
+                  <span
+                    title="Instagram — link coming soon"
+                    className="w-9 h-9 rounded-full bg-[#0b251e] border border-white/10 text-zinc-500 flex items-center justify-center shadow-sm cursor-not-allowed select-none"
+                    aria-label="Instagram (coming soon)"
                   >
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
                       <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
                       <line x1="17.5" y1="6.5" x2="17.5" y2="6.5" />
                     </svg>
-                  </a>
+                  </span>
                   {/* LinkedIn */}
-                  <a
-                    href="#"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="w-9 h-9 rounded-full bg-[#0b251e] border border-white/10 text-zinc-400 hover:text-[#0b2e24] hover:bg-[#cbf341] hover:border-[#cbf341] flex items-center justify-center transition-all duration-300 cursor-pointer shadow-sm"
-                    aria-label="LinkedIn"
+                  <span
+                    title="LinkedIn — link coming soon"
+                    className="w-9 h-9 rounded-full bg-[#0b251e] border border-white/10 text-zinc-500 flex items-center justify-center shadow-sm cursor-not-allowed select-none"
+                    aria-label="LinkedIn (coming soon)"
                   >
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
                       <rect width="4" height="12" x="2" y="9" />
                       <circle cx="4" cy="4" r="2" />
                     </svg>
-                  </a>
+                  </span>
                   {/* X (Twitter) */}
-                  <a
-                    href="#"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="w-9 h-9 rounded-full bg-[#0b251e] border border-white/10 text-zinc-400 hover:text-[#0b2e24] hover:bg-[#cbf341] hover:border-[#cbf341] flex items-center justify-center transition-all duration-300 cursor-pointer shadow-sm"
-                    aria-label="X"
+                  <span
+                    title="X — link coming soon"
+                    className="w-9 h-9 rounded-full bg-[#0b251e] border border-white/10 text-zinc-500 flex items-center justify-center shadow-sm cursor-not-allowed select-none"
+                    aria-label="X (coming soon)"
                   >
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                     </svg>
-                  </a>
+                  </span>
                   {/* Pinterest */}
-                  <a
-                    href="#"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="w-9 h-9 rounded-full bg-[#0b251e] border border-white/10 text-zinc-400 hover:text-[#0b2e24] hover:bg-[#cbf341] hover:border-[#cbf341] flex items-center justify-center transition-all duration-300 cursor-pointer shadow-sm"
-                    aria-label="Pinterest"
+                  <span
+                    title="Pinterest — link coming soon"
+                    className="w-9 h-9 rounded-full bg-[#0b251e] border border-white/10 text-zinc-500 flex items-center justify-center shadow-sm cursor-not-allowed select-none"
+                    aria-label="Pinterest (coming soon)"
                   >
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.41 7.61 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.007-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.211-.174.257-.402.15-1.503-.699-2.44-2.895-2.44-4.652 0-3.79 2.757-7.269 7.935-7.269 4.166 0 7.4 2.97 7.4 6.942 0 4.14-2.611 7.472-6.233 7.472-1.219 0-2.364-.633-2.757-1.38l-.75 2.853c-.27 1.04-1.002 2.35-1.492 3.146 1.124.347 2.317.535 3.554.535 6.607 0 11.985-5.36 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z" />
                     </svg>
-                  </a>
+                  </span>
                   {/* TikTok */}
-                  <a
-                    href="#"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="w-9 h-9 rounded-full bg-[#0b251e] border border-white/10 text-zinc-400 hover:text-[#0b2e24] hover:bg-[#cbf341] hover:border-[#cbf341] flex items-center justify-center transition-all duration-300 cursor-pointer shadow-sm"
-                    aria-label="TikTok"
+                  <span
+                    title="TikTok — link coming soon"
+                    className="w-9 h-9 rounded-full bg-[#0b251e] border border-white/10 text-zinc-500 flex items-center justify-center shadow-sm cursor-not-allowed select-none"
+                    aria-label="TikTok (coming soon)"
                   >
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.06-2.89-.52-4.06-1.47-.73-.59-1.32-1.35-1.72-2.22-.05 1.78-.02 3.56-.04 5.34-.04 2.67-.88 5.43-2.92 7.15-2.02 1.73-4.96 2.25-7.5 1.55-2.58-.69-4.83-2.72-5.54-5.29-.79-2.85-.02-6.12 2.06-8.16 1.83-1.83 4.54-2.42 7.02-1.7v4.09c-1.35-.45-2.88-.13-3.92.83-1.12 1.01-1.47 2.74-1.04 4.19.4 1.34 1.7 2.38 3.1 2.49 1.63.15 3.32-.82 3.86-2.36.27-.71.32-1.48.3-2.23l-.04-11.45z" />
                     </svg>
-                  </a>
+                  </span>
                 </div>
               </div>
             </div>
@@ -308,15 +298,26 @@ export default function Footer({ data, contactData }: { data?: FooterSection; co
                   Utilities
                 </h4>
                 <div className="flex flex-col gap-2.5 sm:gap-3">
-                  {utilitiesLinks.map((item) => (
-                    <a
-                      key={item.label}
-                      href={item.href}
-                      className="font-medium text-xs sm:text-sm text-zinc-350 hover:text-[#cbf341] transition-colors leading-relaxed hover:underline min-h-[28px] flex items-center"
-                    >
-                      {item.label}
-                    </a>
-                  ))}
+                  {utilitiesLinks.map((item) =>
+                    item.staticOnly ? (
+                      <span
+                        key={item.label}
+                        title="Coming soon"
+                        className="font-medium text-xs sm:text-sm text-zinc-500 cursor-not-allowed select-none leading-relaxed min-h-[28px] flex items-center"
+                      >
+                        {item.label}
+                      </span>
+                    ) : (
+                      <a
+                        key={item.label}
+                        href={item.href}
+                        onClick={(e) => scrollToSection(e, item.href)}
+                        className="font-medium text-xs sm:text-sm text-zinc-350 hover:text-[#cbf341] transition-colors leading-relaxed hover:underline min-h-[28px] flex items-center"
+                      >
+                        {item.label}
+                      </a>
+                    )
+                  )}
                 </div>
               </div>
             </div>

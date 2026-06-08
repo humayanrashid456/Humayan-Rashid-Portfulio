@@ -1,10 +1,28 @@
 import { useState } from "react";
+import type { MouseEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { Play, Eye, Clock, Youtube, ArrowUpRight } from "lucide-react";
 import { VideoItem } from "../types";
-import { getVideoSource } from "./Hero";
+
+export const getVideoSource = (urlOrId: string) => {
+  if (!urlOrId) return { isYoutube: false, src: "" };
+  if (urlOrId.endsWith(".mp4") || urlOrId.endsWith(".webm") || urlOrId.endsWith(".ogg")) {
+    return { isYoutube: false, src: urlOrId };
+  }
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+  const match = urlOrId.match(regExp);
+  if (match && match[2].length === 11) {
+    return { isYoutube: true, src: match[2] };
+  }
+  if (!urlOrId.includes("/")) {
+     return { isYoutube: true, src: urlOrId };
+  }
+  return { isYoutube: false, src: urlOrId };
+};
 
 export default function VideoShowcase({ data }: { data?: VideoItem[] }) {
+  const navigate = useNavigate();
   const videosList = data || [];
   const [activeVideoState, setActiveVideoState] = useState<VideoItem | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -17,18 +35,14 @@ export default function VideoShowcase({ data }: { data?: VideoItem[] }) {
     ? videosList
     : videosList.filter(vid => vid.category === selectedTab);
 
-  const handleVideoSelect = (vid: VideoItem) => {
+  const handleVideoSelect = (vid: VideoItem, e: MouseEvent) => {
+    e.stopPropagation();
     setActiveVideoState(vid);
     setIsPlaying(false);
   };
 
-  const getThumbnailImage = (thumbnail: string, index: number) => {
-    if (thumbnail.includes("picsum.photos") || !thumbnail) {
-      if (index === 0) return "/src/assets/images/case_study_team.png";
-      if (index === 1) return "/src/assets/images/social_media_team.png";
-      return "/src/assets/images/seo_analysis_team.png";
-    }
-    return thumbnail;
+  const getThumbnailImage = (_thumbnail: string, _index: number) => {
+    return "/src/assets/images/video_banner.jpg";
   };
 
   return (
@@ -75,7 +89,18 @@ export default function VideoShowcase({ data }: { data?: VideoItem[] }) {
             
             {/* Main Cinematic Action Player Frame (lg:col-span-7) */}
             <div className="lg:col-span-7">
-              <div className="relative rounded-3xl overflow-hidden border border-white/5 bg-[#072418] p-3 sm:p-4 shadow-xl">
+              <div
+                onClick={() => navigate(`/videos/${activeVideo.id}`)}
+                role="link"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    navigate(`/videos/${activeVideo.id}`);
+                  }
+                }}
+                className="relative rounded-3xl overflow-hidden border border-white/5 bg-[#072418] p-3 sm:p-4 shadow-xl cursor-pointer hover:border-[#cbf341]/25 transition-colors"
+              >
                 <div className="aspect-video relative rounded-2xl bg-black overflow-hidden border border-white/5">
                   <AnimatePresence mode="wait">
                     {!isPlaying ? (
@@ -93,24 +118,39 @@ export default function VideoShowcase({ data }: { data?: VideoItem[] }) {
                           className="w-full h-full object-cover grayscale-[15%] group-hover:scale-105 transition-transform duration-700"
                           referrerPolicy="no-referrer"
                         />
-                        {/* Glass gradient cover */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#061910]/90 via-[#061910]/30 to-[#061910]/40" />
+                        {/* Glass gradient cover for better contrast */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#061910] via-[#061910]/20 to-transparent" />
 
-                        {/* Play overlay widget icons */}
+                        {/* Conversion Focused Play overlay widget */}
                         <div className="absolute inset-0 flex flex-col items-center justify-center">
                           <motion.button
                             id="play-inline-showcase-btn"
-                            whileHover={{ scale: 1.1, boxShadow: "0 0 25px rgba(203, 243, 65, 0.5)" }}
+                            whileHover={{ scale: 1.15, boxShadow: "0 0 35px rgba(203, 243, 65, 0.6)" }}
                             whileTap={{ scale: 0.95 }}
-                            onClick={() => setIsPlaying(true)}
-                            className="w-16 h-16 rounded-full bg-[#cbf341] text-[#061910] flex items-center justify-center shadow-2xl cursor-pointer"
+                            animate={{
+                              boxShadow: ["0 0 0px rgba(203, 243, 65, 0)", "0 0 20px rgba(203, 243, 65, 0.4)", "0 0 0px rgba(203, 243, 65, 0)"],
+                            }}
+                            transition={{ repeat: Infinity, duration: 2 }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setIsPlaying(true);
+                            }}
+                            className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#cbf341] text-[#061910] flex items-center justify-center shadow-[0_0_20px_rgba(203,243,65,0.3)] cursor-pointer"
                             aria-label="Play selected video clip"
                           >
-                            <Play size={22} className="fill-[#061910] translate-x-0.5 text-[#061910]" />
+                            <Play size={28} className="fill-[#061910] translate-x-0.5 text-[#061910]" />
                           </motion.button>
-                          <span className="mt-4 font-mono text-[9px] text-[#cbf341] font-bold uppercase tracking-widest bg-[#061910]/90 px-3 py-1.5 rounded-lg border border-[#cbf341]/20">
-                            CLICK TO PLAY REEL
-                          </span>
+                          
+                          <motion.div 
+                            initial={{ y: 10, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.2 }}
+                            className="mt-5 flex flex-col items-center gap-2"
+                          >
+                            <span className="font-display text-sm sm:text-base text-white font-bold bg-[#061910]/80 backdrop-blur-md px-5 py-2 rounded-full border border-[#cbf341]/30 shadow-lg uppercase tracking-wide">
+                              Click to Watch Video
+                            </span>
+                          </motion.div>
                         </div>
 
                         {/* Video Quick specs */}
@@ -157,13 +197,19 @@ export default function VideoShowcase({ data }: { data?: VideoItem[] }) {
                 </div>
 
                 {/* Active description details footer */}
-                <div className="p-4 sm:p-5">
-                  <span className="font-mono text-[9px] bg-[#0a291b] text-[#cbf341] px-2.5 py-1 rounded-full font-bold uppercase tracking-widest inline-block mb-3 border border-[#cbf341]/20">
-                    {activeVideo.category}
+                <div className="p-4 sm:p-5 flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <span className="font-mono text-[9px] bg-[#0a291b] text-[#cbf341] px-2.5 py-1 rounded-full font-bold uppercase tracking-widest inline-block mb-3 border border-[#cbf341]/20">
+                      {activeVideo.category}
+                    </span>
+                    <h3 className="font-display font-bold text-xl text-white leading-snug">
+                      {activeVideo.title}
+                    </h3>
+                  </div>
+                  <span className="font-mono text-[10px] font-bold text-[#cbf341] inline-flex items-center gap-1 shrink-0 group-hover:gap-2 transition-all">
+                    <span>Open</span>
+                    <ArrowUpRight size={12} />
                   </span>
-                  <h3 className="font-display font-bold text-xl text-white leading-snug">
-                    {activeVideo.title}
-                  </h3>
                 </div>
               </div>
             </div>
@@ -181,7 +227,13 @@ export default function VideoShowcase({ data }: { data?: VideoItem[] }) {
                   return (
                     <motion.div
                       key={vid.id}
-                      onClick={() => handleVideoSelect(vid)}
+                      onClick={(e) => {
+                        if (isSelected) {
+                          navigate(`/videos/${vid.id}`);
+                        } else {
+                          handleVideoSelect(vid, e);
+                        }
+                      }}
                       whileHover={{ scale: 1.01 }}
                       className={`p-3.5 rounded-2xl border flex items-center gap-4 cursor-pointer transition-all ${
                         isSelected
@@ -232,15 +284,13 @@ export default function VideoShowcase({ data }: { data?: VideoItem[] }) {
                 <p className="text-[11px] text-zinc-400 mt-2 leading-relaxed font-sans">
                   I upload system engineering breakdowns, web audits, and toolchain assessments every Tuesday.
                 </p>
-                <a
-                  href="#"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1 font-mono text-[9px] font-bold uppercase text-[#cbf341] hover:text-[#bce039] hover:underline mt-3"
+                <span
+                  title="YouTube channel — link coming soon"
+                  className="inline-flex items-center gap-1 font-mono text-[9px] font-bold uppercase text-zinc-500 cursor-not-allowed mt-3 select-none"
                 >
                   <span>Subscribe on YouTube</span>
                   <ArrowUpRight size={10} />
-                </a>
+                </span>
               </div>
 
             </div>

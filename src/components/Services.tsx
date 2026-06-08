@@ -1,6 +1,7 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
-import { Megaphone, Search, MousePointerClick, ChevronLeft, ChevronRight } from "lucide-react";
+import { Megaphone, Search, MousePointerClick, ChevronLeft, ChevronRight, ArrowUpRight } from "lucide-react";
 import { Service } from "../types";
 const socialMediaImg = "/src/assets/images/social_media_team.png";
 const seoAnalysisImg = "/src/assets/images/seo_analysis_team.png";
@@ -12,26 +13,28 @@ interface ServicesProps {
 }
 
 export default function Services({ openBookingModal, data }: ServicesProps) {
-  // Define screenshot services structure as default
+  const navigate = useNavigate();
+
+  // Define screenshot services structure as default — IDs must align with CMS data.ts
   const servicesList = [
     {
-      id: "social-media",
-      title: "Social Media Management",
-      description: "Boost your website's visibility on Google through keyword research, on-page optimization, and backlink strategies.",
+      id: "web-dev",
+      title: "Web Development",
+      description: "Custom visual experiences built using standard React, TypeScript, and high-performance server logic. Focused on structural design patterns and optimized bundle sizes.",
       image: socialMediaImg,
       icon: <Megaphone className="w-5 h-5 text-[#cbf341]" />
     },
     {
-      id: "seo",
-      title: "Search Engine Optimization (SEO)",
-      description: "Boost your website's visibility on Google through keyword research, on-page optimization, and backlink strategies.",
+      id: "seo-opt",
+      title: "SEO Optimization",
+      description: "Comprehensive audits, speed diagnostics, and core structural metadata integrations designed to rise to the top of Google indices.",
       image: seoAnalysisImg,
       icon: <Search className="w-5 h-5 text-[#cbf341]" />
     },
     {
-      id: "ppc",
-      title: "Pay-Per-Click Advertising (PPC)",
-      description: "Drive targeted traffic to your site with cost-effective ad campaigns on Google Ads and social media.",
+      id: "ui-ux",
+      title: "UI/UX Design",
+      description: "Crafting immersive user flows, dynamic interactive states, and pixel-accurate wireframes designed to lock in visual dominance and improve metrics.",
       image: ppcAdvertisingImg,
       icon: <MousePointerClick className="w-5 h-5 text-[#cbf341]" />
     }
@@ -75,17 +78,29 @@ export default function Services({ openBookingModal, data }: ServicesProps) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.6, delay: idx * 0.1, ease: "easeOut" }}
-              className="group flex flex-col p-6 sm:p-8 rounded-[2rem] bg-[#0c2419] border border-[#143d2a] shadow-lg hover:border-[#cbf341]/30 transition-colors duration-300"
+              onClick={() => navigate(`/services/${srv.id}`)}
+              role="link"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  navigate(`/services/${srv.id}`);
+                }
+              }}
+              className="group flex flex-col p-6 sm:p-8 rounded-[2rem] bg-[#0c2419] border border-[#143d2a] shadow-lg hover:border-[#cbf341]/30 cursor-pointer transition-colors duration-300"
             >
               {/* Rounded square icon holder */}
-              <div className="w-14 h-14 shrink-0 rounded-2xl bg-transparent border border-[#cbf341]/30 flex items-center justify-center text-[#cbf341] mb-8">
+              <div className="w-14 h-14 shrink-0 rounded-2xl bg-transparent border border-[#cbf341]/30 flex items-center justify-center text-[#cbf341] mb-8 group-hover:bg-[#cbf341]/10 transition-colors">
                 {srv.icon}
               </div>
 
-              {/* Service Title */}
-              <h3 className="font-display text-2xl sm:text-[28px] font-bold text-white leading-tight mb-6">
-                {srv.title}
-              </h3>
+              {/* Service Title + arrow */}
+              <div className="flex items-start justify-between gap-2 mb-6">
+                <h3 className="font-display text-2xl sm:text-[28px] font-bold text-white leading-tight group-hover:text-[#cbf341] transition-colors">
+                  {srv.title}
+                </h3>
+                <ArrowUpRight size={20} className="text-[#cbf341] opacity-0 group-hover:opacity-100 transition-opacity shrink-0 mt-1.5" />
+              </div>
 
               {/* Separator */}
               <div className="h-[1px] w-full bg-white/10 mb-6" />
@@ -118,14 +133,14 @@ export default function Services({ openBookingModal, data }: ServicesProps) {
           <button
             onClick={openBookingModal}
             className="w-11 h-11 sm:w-10 sm:h-10 rounded-full border border-[#cbf341]/25 hover:border-[#cbf341] text-white hover:text-[#cbf341] flex items-center justify-center transition-colors cursor-pointer"
-            aria-label="Previous service"
+            aria-label="Book a consultation"
           >
             <ChevronLeft size={18} className="w-5 h-5" />
           </button>
           <button
             onClick={openBookingModal}
             className="w-11 h-11 sm:w-10 sm:h-10 rounded-full border border-[#cbf341]/25 hover:border-[#cbf341] text-white hover:text-[#cbf341] flex items-center justify-center transition-colors cursor-pointer"
-            aria-label="Next service"
+            aria-label="Book a consultation"
           >
             <ChevronRight size={18} className="w-5 h-5" />
           </button>

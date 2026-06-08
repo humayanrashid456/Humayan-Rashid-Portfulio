@@ -1,19 +1,27 @@
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { Calendar, Clock, Heart, X, ChevronRight, Bookmark, Share2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "motion/react";
+import { Calendar, Clock, Heart, ChevronRight } from "lucide-react";
 import { BlogPost } from "../types";
 
 export default function Blog({ data }: { data?: BlogPost[] }) {
+  const navigate = useNavigate();
   const blogsList = data || [];
-  const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
   const [likedPosts, setLikedPosts] = useState<Record<string, boolean>>({});
 
   const toggleLike = (postId: string, e: React.MouseEvent) => {
     e.stopPropagation();
+    e.preventDefault();
     setLikedPosts(prev => ({
       ...prev,
       [postId]: !prev[postId]
     }));
+  };
+
+  const openBlog = (id: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate(`/blog/${id}`);
   };
 
   const getBlogImage = (imagePath: string, index: number) => {
@@ -57,7 +65,7 @@ export default function Blog({ data }: { data?: BlogPost[] }) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 0.5, delay: idx * 0.1, ease: "easeOut" }}
-                onClick={() => setSelectedPost(blog)}
+                onClick={(e) => openBlog(blog.id, e)}
                 className="group cursor-pointer flex flex-col h-full bg-[#072418] rounded-3xl border border-white/5 overflow-hidden shadow-xl hover:scale-[1.02] transition-all duration-300"
               >
                 {/* Blog Cover Image banner */}
@@ -129,129 +137,6 @@ export default function Blog({ data }: { data?: BlogPost[] }) {
             );
           })}
         </div>
-
-        {/* Read Post Overlay Modal */}
-        <AnimatePresence>
-          {selectedPost && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
-              {/* Backdrop */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setSelectedPost(null)}
-                className="absolute inset-0 bg-[#061910]/80 backdrop-blur-md"
-              />
-
-              {/* Modal Container */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                transition={{ type: "spring", stiffness: 350, damping: 28 }}
-                className="relative w-full max-w-3xl max-h-[90vh] sm:max-h-[85vh] overflow-y-auto bg-[#072418] rounded-3xl border border-white/10 shadow-2xl z-10"
-              >
-                {/* Article Header Thumbnail */}
-                <div className="aspect-[21/9] bg-[#0a291b] relative w-full border-b border-white/5">
-                  <img
-                    src={getBlogImage(selectedPost.image, blogsList.indexOf(selectedPost))}
-                    alt={selectedPost.title}
-                    className="w-full h-full object-cover"
-                    referrerPolicy="no-referrer"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#072418] via-transparent to-transparent/30" />
-                  
-                  {/* Close button */}
-                  <button
-                    id="close-article-btn"
-                    onClick={() => setSelectedPost(null)}
-                    className="absolute top-4 right-4 p-2 rounded-full bg-black/55 text-white border border-white/20 hover:bg-black/85 transition cursor-pointer"
-                    aria-label="Close article"
-                  >
-                    <X size={18} />
-                  </button>
-
-                  <div className="absolute bottom-6 left-6 right-6">
-                    <span className="font-mono text-[10px] font-bold uppercase py-1.5 px-3 rounded-full bg-[#061910]/90 text-[#cbf341] border border-[#cbf341]/20">
-                      {selectedPost.category}
-                    </span>
-                    <h2 className="font-display font-bold text-xl sm:text-2xl lg:text-3xl text-white mt-4 leading-snug">
-                      {selectedPost.title}
-                    </h2>
-                  </div>
-                </div>
-
-                {/* Article Body Content */}
-                <div className="p-5 sm:p-8 md:p-10">
-                  {/* Metadata line info */}
-                  <div className="flex flex-wrap items-center gap-3 sm:gap-4 md:gap-6 font-mono text-[10px] sm:text-xs text-zinc-400 border-b border-white/5 pb-5 mb-5 uppercase font-semibold">
-                    <div className="flex items-center gap-1.5">
-                      <Calendar size={13} className="text-[#cbf341]" />
-                      <span>{selectedPost.date}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <Clock size={13} className="text-[#cbf341]" />
-                      <span>{selectedPost.readTime}</span>
-                    </div>
-                    <span>By Humayan Rashid</span>
-                  </div>
-
-                  {/* HTML-structured simulated article prose */}
-                  <div className="prose prose-invert max-w-none text-zinc-300 space-y-5 text-base leading-relaxed">
-                    <p className="font-semibold text-white text-lg leading-relaxed">
-                      {selectedPost.excerpt}
-                    </p>
-                    <p>
-                      In modern engineering workflows, visual friction directly leads to higher user bounce rates. In order to mitigate this, developers must coordinate interactive elements at a microscopic scale. By styling components and setting precise animation delays using custom spring-mechanics, we create intuitive spatial cues that direct attention to call-to-actions.
-                    </p>
-                    <h3 className="font-display font-bold text-xl text-white pt-3">
-                      1. Avoiding Cumulative Layout Shift
-                    </h3>
-                    <p>
-                      Layout shifts feel cheap and unpolished. I prioritize defining strict bounds, static aspect ratios for all assets (such as defining image aspect bounds directly inside cards to eliminate pixel jitters), and deferring analytical libraries. This guarantees a smooth first contentful paint.
-                    </p>
-                    <blockquote className="border-l-4 border-[#cbf341] pl-4 py-2 italic font-serif text-zinc-300 bg-[#0a291b] p-4 rounded-r-xl border border-white/5">
-                      "Good performance is invisible. Shoddy asset optimization is highly noticeable. Optimize first, iterate second."
-                    </blockquote>
-                    <h3 className="font-display font-bold text-xl text-white pt-3">
-                      2. Real-time Optimization Audits
-                    </h3>
-                    <p>
-                      When clients complain about mobile performance, 90% of the time, the culprit is uncompressed images loaded with full-resolution pipelines. For all my web applications, I leverage modern formats like WebP or AVIF, alongside on-demand resizing utilities, reducing general load times by up to 65%.
-                    </p>
-                  </div>
-
-                  {/* Actions in Footer */}
-                  <div className="flex justify-between items-center mt-10 pt-6 border-t border-white/5">
-                    <div className="flex items-center gap-2">
-                      <button
-                        id="bookmark-article"
-                        className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/5 transition cursor-pointer"
-                      >
-                        <Bookmark size={16} />
-                      </button>
-                      <button
-                        id="share-article"
-                        className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/5 transition cursor-pointer"
-                      >
-                        <Share2 size={16} />
-                      </button>
-                    </div>
-
-                    <button
-                      id="close-reading-cta"
-                      onClick={() => setSelectedPost(null)}
-                      className="px-5 py-2.5 bg-[#cbf341] hover:bg-[#bce039] text-[#061910] rounded-xl text-xs font-black transition cursor-pointer"
-                    >
-                      Done Reading
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-          )}
-        </AnimatePresence>
-
       </div>
     </section>
   );

@@ -14,7 +14,10 @@ import {
   ChevronLeft, 
   ChevronRight, 
   ArrowUpRight,
-  Globe
+  Globe,
+  LayoutDashboard,
+  CreditCard,
+  Terminal
 } from "lucide-react";
 
 interface SidebarProps {
@@ -34,8 +37,9 @@ export default function Sidebar({
 }: SidebarProps) {
   const navigate = useNavigate();
 
-  // Exact 10 sections requested by user
+  // 14 sections: overview first, content management, then ops & finance, then site config
   const navItems = [
+    { id: "overview", label: "Overview", icon: LayoutDashboard, desc: "At-a-glance dashboard" },
     { id: "hero", label: "Hero Banner", icon: Sparkles, desc: "Intro name, tagline & visuals" },
     { id: "stats", label: "Statistics", icon: BarChart3, desc: "Authority & key metric boxes" },
     { id: "about", label: "Biography/About", icon: Users, desc: "Detailed bio & testimonials" },
@@ -44,6 +48,9 @@ export default function Sidebar({
     { id: "projects", label: "Portfolio Projects", icon: Briefcase, desc: "Blueprints & live demos" },
     { id: "videos", label: "Video Showcase", icon: Video, desc: "Video walkthroughs list" },
     { id: "blogs", label: "Articles/Blog", icon: BookOpen, desc: "Writeups, trends & articles" },
+    { id: "analytics", label: "Analytics", icon: Terminal, desc: "Traffic, API & region stats" },
+    { id: "users", label: "User Management", icon: Users, desc: "Admin & member roles" },
+    { id: "transactions", label: "Transactions", icon: CreditCard, desc: "Billing & payment history" },
     { id: "contact", label: "Contact Info", icon: Mail, desc: "Email, links & socials" },
     { id: "settings", label: "Site Settings", icon: Settings, desc: "SEO metadata & configs" },
   ];

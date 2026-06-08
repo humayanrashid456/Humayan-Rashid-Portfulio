@@ -7,17 +7,20 @@ import PortfolioProjects from "./PortfolioProjects";
 import WorkingProcess from "./WorkingProcess";
 import Benefits from "./Benefits";
 import VideoShowcase from "./VideoShowcase";
+import StudyAbroad from "./StudyAbroad";
 import Blog from "./Blog";
 import Contact from "./Contact";
 import Footer from "./Footer";
-import BookingModal from "./BookingModal";
-import { loadCMSData } from "../lib/cmsState";
+import { loadCMSData, syncCMSFromSupabase } from "../lib/cmsState";
 
-export default function PortfolioHome() {
+interface PortfolioHomeProps {
+  openBookingModal: () => void;
+}
+
+export default function PortfolioHome({ openBookingModal }: PortfolioHomeProps) {
   const [cmsData, setCmsData] = useState(loadCMSData());
   const [theme, setTheme] = useState<"light" | "dark">("dark");
   const [glowMode, setGlowMode] = useState<"default" | "yellow" | "green">("default");
-  const [isBookingOpen, setIsBookingOpen] = useState(false);
 
   // Sync theme
   useEffect(() => {
@@ -41,6 +44,13 @@ export default function PortfolioHome() {
     }
   }, [cmsData.settings?.faviconUrl]);
 
+  // Sync from Supabase on mount
+  useEffect(() => {
+    syncCMSFromSupabase().then((remoteData) => {
+      setCmsData(remoteData);
+    });
+  }, []);
+
   // Keep cmsData updated if local storage is updated (custom update dispatch listen)
   useEffect(() => {
     const handleCMSUpdate = () => {
@@ -49,8 +59,17 @@ export default function PortfolioHome() {
       setCmsData(updatedData);
     };
     window.addEventListener("portfolio-cms-update", handleCMSUpdate);
-    return () => window.removeEventListener("portfolio-cms-update", handleCMSUpdate);
+
+    return () => {
+      window.removeEventListener("portfolio-cms-update", handleCMSUpdate);
+    };
   }, []);
+
+  const handleOpenBooking = () => {
+    // Dispatch global event so the App-level modal can open from anywhere
+    window.dispatchEvent(new CustomEvent("portfolio:open-booking"));
+    if (openBookingModal) openBookingModal();
+  };
 
   return (
     <div className="min-h-screen bg-[#061910] dark:bg-[#061910] text-[#fafafa] font-sans transition-colors duration-300 relative overflow-x-hidden gradient-primary">
@@ -65,7 +84,7 @@ export default function PortfolioHome() {
       <Navbar
         theme={theme}
         toggleTheme={() => setTheme(prev => prev === "dark" ? "light" : "dark")}
-        openBookingModal={() => setIsBookingOpen(true)}
+        openBookingModal={handleOpenBooking}
         glowMode={glowMode}
         setGlowMode={setGlowMode}
         logoUrl={cmsData.settings?.logoUrl || cmsData.footer?.logoText}
@@ -75,10 +94,10 @@ export default function PortfolioHome() {
       {/* Sections structured with absolute viewport container margins to ensure perfect desktop & mobile scaling */}
       <div className="relative z-10">
         <div id="home">
-          <Hero openBookingModal={() => setIsBookingOpen(true)} data={cmsData.hero} />
+          <Hero openBookingModal={handleOpenBooking} data={cmsData.hero} />
         </div>
         
-        <Services openBookingModal={() => setIsBookingOpen(true)} data={cmsData.services} />
+        <Services openBookingModal={handleOpenBooking} data={cmsData.services} />
         
         <About data={cmsData.about} customSkills={cmsData.skills} />
         
@@ -90,15 +109,14 @@ export default function PortfolioHome() {
         
         <VideoShowcase data={cmsData.videos} />
         
+        <StudyAbroad openBookingModal={handleOpenBooking} />
+        
         <Blog data={cmsData.blogs} />
         
-        <Contact data={cmsData.contact} openBookingModal={() => setIsBookingOpen(true)} />
+        <Contact data={cmsData.contact} openBookingModal={handleOpenBooking} />
         
         <Footer data={cmsData.footer} contactData={cmsData.contact} />
       </div>
-
-      {/* Premium Booking & Consultation form Modal dialog elements */}
-      <BookingModal isOpen={isBookingOpen} onClose={() => setIsBookingOpen(false)} />
     </div>
   );
 }

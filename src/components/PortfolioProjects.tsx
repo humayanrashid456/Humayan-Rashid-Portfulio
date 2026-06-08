@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { Github, ExternalLink, Code2, Globe, Compass, Cpu, Layers, ChevronLeft, ChevronRight } from "lucide-react";
 import { Project } from "../types";
@@ -8,6 +9,7 @@ interface PortfolioProjectsProps {
 }
 
 export default function PortfolioProjects({ data }: PortfolioProjectsProps) {
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
 
   // Dynamically extract categories that have active items
@@ -115,7 +117,16 @@ export default function PortfolioProjects({ data }: PortfolioProjectsProps) {
                   exit={{ opacity: 0, scale: 0.92, y: 15 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4 }}
-                  className="group flex flex-col justify-between p-6 rounded-3xl bg-[#072418] border border-white/5 shadow-xl hover:scale-[1.02] transition-all duration-300"
+                  onClick={() => navigate(`/projects/${proj.id}`)}
+                  role="link"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      navigate(`/projects/${proj.id}`);
+                    }
+                  }}
+                  className="group flex flex-col justify-between p-6 rounded-3xl bg-[#072418] border border-white/5 shadow-xl hover:scale-[1.02] hover:border-[#cbf341]/25 cursor-pointer transition-all duration-300"
                 >
                   <div className="flex flex-col h-full justify-between">
                     <div>
@@ -134,6 +145,7 @@ export default function PortfolioProjects({ data }: PortfolioProjectsProps) {
                                 href={proj.githubUrl}
                                 target="_blank"
                                 rel="noreferrer"
+                                onClick={(e) => e.stopPropagation()}
                                 className="flex-1 py-2.5 px-3 rounded-xl bg-[#0a291b] hover:bg-[#113f2a] text-white border border-white/10 font-mono text-[10px] font-bold uppercase flex items-center justify-center gap-1.5 transition-all"
                               >
                                 <Github size={12} className="text-[#cbf341]" />
@@ -145,6 +157,7 @@ export default function PortfolioProjects({ data }: PortfolioProjectsProps) {
                                 href={proj.liveUrl}
                                 target="_blank"
                                 rel="noreferrer"
+                                onClick={(e) => e.stopPropagation()}
                                 className="flex-1 py-2.5 px-3 rounded-xl bg-[#cbf341] hover:bg-[#bce039] text-[#061910] font-mono text-[10px] font-black uppercase flex items-center justify-center gap-1.5 transition-all animate-pulse"
                               >
                                 <ExternalLink size={12} />
@@ -191,6 +204,7 @@ export default function PortfolioProjects({ data }: PortfolioProjectsProps) {
                             href={proj.githubUrl}
                             target="_blank"
                             rel="noreferrer"
+                            onClick={(e) => e.stopPropagation()}
                             className="font-mono text-[9px] font-bold uppercase text-zinc-400 hover:text-white flex items-center gap-1"
                           >
                             <Github size={11} className="text-[#cbf341]" />
@@ -202,6 +216,7 @@ export default function PortfolioProjects({ data }: PortfolioProjectsProps) {
                             href={proj.liveUrl}
                             target="_blank"
                             rel="noreferrer"
+                            onClick={(e) => e.stopPropagation()}
                             className="font-mono text-[9px] font-bold uppercase text-[#cbf341] hover:underline flex items-center gap-1"
                           >
                             <span>Live Demo</span>

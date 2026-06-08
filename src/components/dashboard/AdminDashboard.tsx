@@ -3,13 +3,17 @@ import { AnimatePresence, motion } from "motion/react";
 import { 
   Sparkles, BarChart3, Users as UsersIcon, Sliders, Layers, 
   Briefcase, Video, BookOpen, Mail, Settings as SettingsIcon, Globe,
-  ArrowUpRight, X 
+  ArrowUpRight, X, LayoutDashboard, CreditCard, Terminal
 } from "lucide-react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import PortfolioCMS from "./PortfolioCMS";
+import Overview from "./Overview";
+import Analytics from "./Analytics";
+import Users from "./Users";
+import Transactions from "./Transactions";
 
 interface AdminDashboardProps {
   theme: "light" | "dark" | "stone";
@@ -17,7 +21,7 @@ interface AdminDashboardProps {
 }
 
 export default function AdminDashboard({ theme, toggleTheme }: AdminDashboardProps) {
-  const [activeTab, setActiveTab] = useState<string>("hero");
+  const [activeTab, setActiveTab] = useState<string>("overview");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
@@ -26,6 +30,7 @@ export default function AdminDashboard({ theme, toggleTheme }: AdminDashboardPro
   // Admin section specific SEO
   useEffect(() => {
     const tabLabels: Record<string, string> = {
+      overview: "CMS Overview Dashboard",
       hero: "Hero Section Management",
       stats: "Performance Statistics",
       about: "Biography & Profile",
@@ -35,10 +40,14 @@ export default function AdminDashboard({ theme, toggleTheme }: AdminDashboardPro
       videos: "Video Showcase",
       blogs: "Articles & Insights",
       contact: "Contact Information",
-      settings: "Site Configuration"
+      settings: "Site Configuration",
+      analytics: "Traffic & Analytics",
+      users: "User Management",
+      transactions: "Transactions & Billing"
     };
     
     const tabDescriptions: Record<string, string> = {
+      overview: "Get a high-level snapshot of site traffic, user growth, recent activity, and operational health for Humayan Rashid's portfolio CMS.",
       hero: "Manage the hero banner, call-to-actions, and main value proposition for Humayan Rashid's portfolio CMS.",
       stats: "Update performance statistics, client metrics, and success indicators for Humayan Rashid's professional portfolio.",
       about: "Edit the biography, profile image, and client testimonials for Humayan Rashid's professional portfolio.",
@@ -48,13 +57,15 @@ export default function AdminDashboard({ theme, toggleTheme }: AdminDashboardPro
       videos: "Manage YouTube video showcases and interactive media content for Humayan Rashid's digital portfolio.",
       blogs: "Publish and manage technical articles, system engineering breakdowns, and insights for Humayan Rashid's blog.",
       contact: "Update professional contact information, social links, and communication channels for Humayan Rashid.",
-      settings: "Configure SEO metadata, site theme, analytics, and global settings for Humayan Rashid's portfolio CMS."
+      settings: "Configure SEO metadata, site theme, analytics, and global settings for Humayan Rashid's portfolio CMS.",
+      analytics: "Review traffic sources, regional latency, API health, and conversion metrics for Humayan Rashid's portfolio.",
+      users: "Manage admin users, role assignments, statuses, and access for the portfolio CMS dashboard.",
+      transactions: "Review subscription payments, invoice settlements, and billing history for Humayan Rashid's portfolio services."
     };
 
     const sectionName = tabLabels[activeTab] || "CMS Dashboard";
-    // Use a professional SEO title for the Hero management page; other tabs keep their descriptive titles.
     const seoTitle = "Humayan Rashid | Full Stack Developer & UI/UX Designer";
-    const title = activeTab === "hero" ? seoTitle : `${sectionName} | Portfolio Content Management System - Humayan Rashid`;
+    const title = activeTab === "overview" ? seoTitle : `${sectionName} | Portfolio Content Management System - Humayan Rashid`;
     const description = tabDescriptions[activeTab] || "Manage Humayan Rashid's professional portfolio content through this custom CMS dashboard.";
     
     document.title = title;
@@ -71,6 +82,7 @@ export default function AdminDashboard({ theme, toggleTheme }: AdminDashboardPro
   }, [activeTab]);
 
   const mobileNavItems = [
+    { id: "overview", label: "Overview", icon: LayoutDashboard },
     { id: "hero", label: "Hero Banner", icon: Sparkles },
     { id: "stats", label: "Statistics", icon: BarChart3 },
     { id: "about", label: "Biography/About", icon: UsersIcon },
@@ -79,9 +91,33 @@ export default function AdminDashboard({ theme, toggleTheme }: AdminDashboardPro
     { id: "projects", label: "Portfolio Projects", icon: Briefcase },
     { id: "videos", label: "Video Showcase", icon: Video },
     { id: "blogs", label: "Articles/Blog", icon: BookOpen },
+    { id: "analytics", label: "Analytics", icon: BarChart3 },
+    { id: "users", label: "Users", icon: UsersIcon },
+    { id: "transactions", label: "Transactions", icon: CreditCard },
     { id: "contact", label: "Contact Info", icon: Mail },
     { id: "settings", label: "Site Settings", icon: SettingsIcon },
   ];
+
+  const renderActiveTabContent = () => {
+    switch (activeTab) {
+      case "overview":
+        return <Overview />;
+      case "analytics":
+        return <Analytics />;
+      case "users":
+        return <Users />;
+      case "transactions":
+        return <Transactions />;
+      default:
+        return (
+          <PortfolioCMS
+            activeCategory={activeTab as any}
+            setActiveCategory={setActiveTab as any}
+            onToggleViewMode={() => navigate("/")}
+          />
+        );
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#061910] text-zinc-100 font-sans transition-colors duration-300 relative overflow-x-hidden flex self-stretch flex-row">
@@ -121,11 +157,7 @@ export default function AdminDashboard({ theme, toggleTheme }: AdminDashboardPro
               transition={{ duration: 0.15 }}
               className="w-full"
             >
-              <PortfolioCMS 
-                activeCategory={activeTab as any} 
-                setActiveCategory={setActiveTab as any} 
-                onToggleViewMode={() => navigate("/")} 
-              />
+              {renderActiveTabContent()}
             </motion.div>
           </AnimatePresence>
         </main>

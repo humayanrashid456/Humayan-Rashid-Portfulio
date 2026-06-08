@@ -4,7 +4,7 @@ import {
   Bell, Search, Sun, Moon, Sparkles, ChevronRight, Menu, 
   X, CheckCircle, AlertTriangle, ShieldCheck, HelpCircle, Terminal 
 } from "lucide-react";
-import { loadCMSData } from "../../lib/cmsState";
+import { loadCMSData, syncCMSFromSupabase } from "../../lib/cmsState";
 
 interface HeaderProps {
   activeTab: string;
@@ -37,6 +37,10 @@ export default function Header({
   const [showSshModal, setShowSshModal] = useState(false);
   
   const [cmsData, setCmsData] = useState(loadCMSData());
+
+  useEffect(() => {
+    syncCMSFromSupabase().then((remoteData) => setCmsData(remoteData));
+  }, []);
 
   useEffect(() => {
     const handleCMSUpdate = () => setCmsData(loadCMSData());

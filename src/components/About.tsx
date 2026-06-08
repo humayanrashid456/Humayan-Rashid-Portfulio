@@ -116,7 +116,12 @@ export default function About({ data, customSkills }: AboutProps) {
               </ul>
 
               <div className="flex flex-col sm:flex-row items-center gap-6">
-                <button className="w-full sm:w-auto px-6 py-3 bg-[#cbf341] hover:bg-[#b8de3b] text-[#061910] font-bold rounded-full transition-colors flex items-center justify-center gap-2 text-sm shadow-md">
+                <button
+                  onClick={() => {
+                    window.dispatchEvent(new CustomEvent("portfolio:open-booking"));
+                  }}
+                  className="w-full sm:w-auto px-6 py-3 bg-[#cbf341] hover:bg-[#b8de3b] text-[#061910] font-bold rounded-full transition-colors flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
+                >
                   <ArrowUpRight className="w-4 h-4" />
                   Get In Touch
                 </button>
