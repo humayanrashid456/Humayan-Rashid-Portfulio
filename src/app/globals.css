@@ -1,0 +1,240 @@
+@import "tailwindcss";
+
+/* Font families are self-hosted by next/font (see src/app/fonts.ts). */
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
+}
+
+:root {
+  --color-primary-dark: #061910;
+  --color-primary-mid: #0b2b1d;
+  --color-primary-light: #133c31;
+  --color-primary-vibrant: #cbf341;
+  --color-primary-saturated: #b2d932;
+  --color-accent: #14b8a6;
+  --color-secondary: #6366f1;
+  --color-text: #fafafa;
+  --color-text-muted: #a1a1aa;
+  --color-border: rgba(203, 243, 65, 0.15);
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Keep in-page anchors (e.g. /#about) clear of the fixed navbar. */
+[id] {
+  scroll-margin-top: 80px;
+}
+
+body {
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Custom scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: rgba(9, 9, 11, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(161, 161, 170, 0.25);
+  border-radius: 9999px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(63, 63, 70, 0.45);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(113, 113, 122, 0.6);
+}
+
+/* Glassmorphism utility classes */
+.glass-panel {
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.dark .glass-panel {
+  background-color: rgba(9, 9, 11, 0.7);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.gradient-primary {
+  background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary-mid) 100%);
+}
+
+.gradient-mesh {
+  background: radial-gradient(circle, rgba(203, 243, 65, 0.03) 0%, transparent 70%);
+}
+
+/* Unified Glow Card Effects */
+.glow-card {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glow-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(to bottom, rgba(6, 25, 16, 0.3), rgba(11, 43, 29, 0.05));
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: xor;
+  -webkit-mask-composite: xor;
+  pointer-events: none;
+  z-index: 2;
+  transition: opacity 0.3s ease;
+}
+
+.glow-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-border);
+}
+
+.glow-card:hover::before {
+  background: linear-gradient(135deg, var(--color-border) 0%, rgba(203, 243, 65, 0.1) 100%);
+  opacity: 1;
+}
+
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.btn-shimmer:hover::after {
+  left: 100%;
+}
+
+/* Mobile accessibility - minimum touch target size for buttons/links */
+button,
+a[role="button"] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent iOS input zoom by ensuring font-size >= 16px on inputs */
+@media (max-width: 639px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="date"],
+  input[type="search"],
+  input[type="url"],
+  input[type="tel"],
+  input[type="password"],
+  textarea,
+  select {
+    font-size: 16px;
+  }
+}
+
+/* ============================================
+   Form controls: brand defaults.
+   They sit in @layer base, so a component's own Tailwind classes (in
+   @layer utilities) override them. Unlayered, these rules used to beat
+   every utility class and forced a slate-blue field onto the whole site.
+   Contrast on the #05110b field (WCAG AA): text 19:1, placeholder 7.3:1,
+   border (zinc-500) 4:1, above the 3:1 required for control boundaries.
+   ============================================ */
+@layer base {
+  :root {
+    /* Native controls (date picker, select popup, scrollbars) render dark. */
+    color-scheme: dark;
+  }
+
+  input,
+  textarea,
+  select {
+    background-color: #05110b;
+    color: #fafafa;
+    caret-color: #cbf341;
+    border-color: #71717b;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: #9f9fa9;
+    opacity: 1;
+  }
+
+  select option {
+    background-color: #05110b;
+    color: #fafafa;
+  }
+
+  input:disabled,
+  textarea:disabled,
+  select:disabled {
+    color: #9f9fa9;
+    cursor: not-allowed;
+  }
+}
+
+/* Browser autofill paints its own background. An inset shadow is the only
+   reliable override, and it needs !important to beat the browser stylesheet. */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px #05110b inset !important;
+  box-shadow: 0 0 0 1000px #05110b inset !important;
+  -webkit-text-fill-color: #fafafa !important;
+  caret-color: #cbf341;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* Visible keyboard focus in the admin (mouse clicks don't trigger it). */
+.admin-ui :focus-visible {
+  outline: 2px solid #cbf341;
+  outline-offset: 2px;
+}
+
+/* Marquee animation */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-25%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

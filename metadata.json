@@ -1,6 +1,0 @@
-{
-  "name": "Humayan Rashid Portfolio",
-  "description": "A modern, highly-responsive administrative SaaS dashboard with a command command palette, custom SVG tracking telemetry, team clearership tables, and fully-interactive configurations.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}

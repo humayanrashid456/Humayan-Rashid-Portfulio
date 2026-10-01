@@ -1,8 +1,18 @@
+# dependencies
 node_modules/
+
+# next.js
+.next/
+out/
 build/
-dist/
-coverage/
+next-env.d.ts
+*.tsbuildinfo
+
+# misc
 .DS_Store
 *.log
+coverage/
+
+# env files (keep the example)
 .env*
 !.env.example
