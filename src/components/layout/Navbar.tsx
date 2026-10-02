@@ -4,9 +4,8 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { m, AnimatePresence } from "motion/react";
-import { Menu, X, Sun, Moon, ChevronDown, ArrowUpRight, Workflow, Layers, Sparkles, Globe, Mail, BookOpen, Video } from "lucide-react";
+import { Menu, X, ChevronDown, ArrowUpRight, Workflow, Layers, Sparkles, Globe, Mail, BookOpen, Video } from "lucide-react";
 import { useBooking } from "@/components/providers/BookingProvider";
-import { useTheme } from "@/hooks/useTheme";
 import BrandMark from "./BrandMark";
 
 interface NavbarProps {
@@ -60,7 +59,6 @@ const isItemActive = (pathname: string, item: MenuItem) =>
   (item.dropdownItems ?? []).some((sub) => matchesPath(pathname, sub.href));
 
 export default function Navbar({ logoTitle, logoSubtitle }: NavbarProps) {
-  const { theme, toggleTheme } = useTheme();
   const { openBooking: openBookingModal } = useBooking();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
@@ -221,13 +219,6 @@ export default function Navbar({ logoTitle, logoSubtitle }: NavbarProps) {
 
           {/* Desktop Actions bar */}
           <div className="hidden lg:flex items-center gap-3">
-            <button
-              onClick={toggleTheme}
-              className="p-2.5 rounded-full border border-[#cbf341]/25 bg-[#0a291b] hover:bg-[#0b2b1d] text-[#cbf341] cursor-pointer transition-colors"
-              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-            >
-              {theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}
-            </button>
             <m.button
               id="desktop-cta-book"
               whileHover={{ scale: 1.03 }}
@@ -242,15 +233,6 @@ export default function Navbar({ logoTitle, logoSubtitle }: NavbarProps) {
 
           {/* Mobile Controls */}
           <div className="flex items-center gap-1.5 lg:hidden shrink-0 ml-2">
-            <button
-              id="mobile-theme-toggle"
-              onClick={toggleTheme}
-              className="p-2.5 rounded-xl border border-[#cbf341]/25 bg-[#0a291b] text-[#cbf341] cursor-pointer min-h-[40px] min-w-[40px]"
-              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-            >
-              {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
-            </button>
-
             <button
               id="hamburger-btn"
               onClick={() => setIsOpen(!isOpen)}

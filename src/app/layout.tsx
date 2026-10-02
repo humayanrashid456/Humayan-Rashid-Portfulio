@@ -1,9 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import type { ReactNode } from "react";
 import { BookingProvider } from "@/components/providers/BookingProvider";
 import { MotionProvider } from "@/components/providers/MotionProvider";
-import { themeInitScript } from "@/hooks/useTheme";
 import { getSiteSettings } from "@/lib/data/settings";
 import { SITE_URL } from "@/lib/site";
 import { fontVariables } from "./fonts";
@@ -41,12 +39,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`dark ${fontVariables}`} suppressHydrationWarning>
-      <head>
-        <Script id="theme-init" strategy="beforeInteractive">
-          {themeInitScript}
-        </Script>
-      </head>
+    <html lang="en" className={`dark ${fontVariables}`}>
       <body className="font-sans antialiased bg-[#061910] text-[#fafafa]">
         <MotionProvider>
           <BookingProvider>{children}</BookingProvider>

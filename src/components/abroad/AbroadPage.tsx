@@ -7,12 +7,11 @@ import { m, type Variants } from "motion/react";
 import {
   GraduationCap, Users, Building2, Globe, ShieldCheck,
   Phone, ClipboardCheck, Plane, BookOpen, Award,
-  ArrowLeft, Sun, Moon, ArrowRight, Check, Sparkles, Star,
+  ArrowLeft, ArrowRight, Check, Sparkles, Star,
   MessageSquare, TrendingUp, Target, Network, BadgeCheck,
   Briefcase, FileText, Mic, Wallet, ChevronRight,
 } from "lucide-react";
 import BrandMark from "@/components/layout/BrandMark";
-import { useTheme } from "@/hooks/useTheme";
 import AbroadLeadForm from "./AbroadLeadForm";
 
 const fadeUp: Variants = {
@@ -71,7 +70,6 @@ interface AbroadPageProps {
 }
 
 export default function AbroadPage({ logoTitle, logoSubtitle, copyright }: AbroadPageProps) {
-  const { theme, toggleTheme } = useTheme();
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -135,14 +133,6 @@ export default function AbroadPage({ logoTitle, logoSubtitle, copyright }: Abroa
                 <ArrowLeft size={13} />
                 <span>Back to Home</span>
               </Link>
-              <button
-                type="button"
-                onClick={toggleTheme}
-                className="p-2.5 rounded-full border border-[#cbf341]/25 bg-[#0a291b] hover:bg-[#0b2b1d] text-[#cbf341] cursor-pointer transition-colors"
-                aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-              >
-                {theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}
-              </button>
               <button
                 type="button"
                 onClick={openBookingModal}
