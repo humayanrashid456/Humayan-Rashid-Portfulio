@@ -38,7 +38,7 @@ export default function Services({ heading, services, limit, viewAllHref }: Serv
             initial={{ opacity: 0, y: -10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0a291b] border border-[#cbf341]/25 text-[#cbf341] text-[8px] sm:text-[10px] lg:text-xs font-semibold uppercase tracking-widest mb-4"
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0a291b] border border-[#cbf341]/25 text-[#cbf341] text-[10px] lg:text-xs font-semibold uppercase tracking-widest mb-4"
           >
             <span>{heading.eyebrow}</span>
           </m.div>

@@ -44,11 +44,12 @@ export default function Hero({ content }: { content: HomeContent["hero"] }) {
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
 
         {/* ─── Main 2-Column Layout ─── */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 items-start gap-y-12 lg:gap-x-[100px]">
+        {/* Two fr tracks, not a 12-col grid: a 100px gap repeated across 11 gutters overflowed below ~1300px. */}
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] items-start gap-y-12 lg:gap-x-12 xl:gap-x-[100px]">
 
-          {/* ── Left: Video Card (Col 5) ── */}
+          {/* ── Left: Video Card ── */}
           <m.div
-            className="lg:col-span-5 relative w-full"
+            className="relative w-full min-w-0"
             initial="hidden"
             animate="show"
             variants={fadeUp}
@@ -100,13 +101,12 @@ export default function Hero({ content }: { content: HomeContent["hero"] }) {
 
               {/* Bottom Tabs */}
               <div
-                className="px-4 py-4 bg-[#05110b] flex items-center justify-between border-t border-white/5 overflow-x-auto gap-4"
-                style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+                className="px-3 sm:px-4 py-4 bg-[#05110b] flex flex-wrap items-center justify-around border-t border-white/5 gap-x-3 gap-y-3 sm:gap-x-4"
               >
                 {content.tabs.map((tab) => (
                   <div key={tab.label} className="flex flex-col items-center gap-1.5 min-w-fit opacity-60 hover:opacity-100 transition-opacity">
                     <Icon name={tab.icon} size={18} className="text-[#cbf341]" />
-                    <span className="text-[10px] font-bold tracking-widest text-white uppercase">{tab.label}</span>
+                    <span className="text-[9px] sm:text-[10px] font-bold tracking-wider sm:tracking-widest text-white uppercase">{tab.label}</span>
                   </div>
                 ))}
               </div>
@@ -121,9 +121,9 @@ export default function Hero({ content }: { content: HomeContent["hero"] }) {
             )}
           </m.div>
 
-          {/* ── Right: Hero Content (Col 7) ── */}
+          {/* ── Right: Hero Content ── */}
           <m.div
-            className="lg:col-span-7 flex flex-col justify-center"
+            className="flex flex-col justify-center min-w-0"
             initial="hidden"
             animate="show"
             variants={fadeUp}
@@ -198,14 +198,15 @@ export default function Hero({ content }: { content: HomeContent["hero"] }) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.9, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-16 sm:mt-20 bg-[#081d13] border border-white/5 rounded-2xl px-6 py-6 shadow-xl"
+          className="mt-16 sm:mt-20 bg-[#081d13] border border-white/5 rounded-2xl px-5 sm:px-6 py-6 shadow-xl"
         >
-          <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center sm:justify-between gap-6 text-sm text-zinc-300">
+          <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center justify-center xl:justify-between gap-x-8 gap-y-4 w-fit sm:w-auto mx-auto text-sm text-zinc-300">
             {content.trustItems.map((item, i) => (
               <div key={i} className="flex items-center gap-3">
                 <Icon name={item.icon} size={20} className="text-[#cbf341] shrink-0" />
                 <span className="font-medium text-white">{item.label}</span>
-                {i < content.trustItems.length - 1 && <div className="hidden sm:block w-px h-6 bg-white/10 ml-6" />}
+                {/* Dividers only where the row fits on one line; when it wraps they dangle. */}
+                {i < content.trustItems.length - 1 && <div className="hidden xl:block w-px h-6 bg-white/10 ml-6" />}
               </div>
             ))}
           </div>

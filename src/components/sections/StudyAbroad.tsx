@@ -133,7 +133,7 @@ export default function StudyAbroad({ content }: { content: HomeContent["studyAb
                       height={24}
                       className="w-8 h-5 sm:w-9 sm:h-6 object-cover rounded-[3px] shadow-sm"
                     />
-                    <span className="text-[8px] sm:text-[9px] font-bold text-zinc-400 tracking-widest uppercase text-center">{c.name}</span>
+                    <span className="text-[9px] font-bold text-zinc-400 tracking-wider sm:tracking-widest uppercase text-center">{c.name}</span>
                   </div>
                 ))}
               </m.div>

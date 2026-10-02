@@ -109,13 +109,13 @@ return (
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 30 }}
         transition={{ type: "spring", stiffness: 350, damping: 28 }}
-        className="relative w-full max-w-lg bg-gradient-to-br from-[#0a291b] to-[#0b2b1d] border-2 border-[#cbf341]/30 rounded-3xl shadow-2xl shadow-[#cbf341]/25 max-h-[calc(100vh-2rem)] overflow-y-auto z-10 glow-card"
+        className="relative w-full max-w-lg bg-gradient-to-br from-[#0a291b] to-[#0b2b1d] border-2 border-[#cbf341]/30 rounded-3xl shadow-2xl shadow-[#cbf341]/25 max-h-[calc(100dvh-2rem)] overflow-y-auto z-10 glow-card"
       >
         <div className="p-4 sm:p-6 border-b border-[#cbf341]/20 flex items-center justify-between gap-3">
           <div className="min-w-0 flex-1">
             <h2 id="booking-modal-title" className="font-display font-medium text-base sm:text-lg text-[#fafafa] flex items-center gap-2">
               <Calendar size={18} className="text-[#cbf341] shrink-0" />
-              <span className="truncate">Initialize Strategic Session</span>
+              <span className="leading-tight">Initialize Strategic Session</span>
             </h2>
             {step < 4 && (
               <p className="font-mono text-[8px] text-[#cbf341]/70 font-bold uppercase tracking-widest mt-1">

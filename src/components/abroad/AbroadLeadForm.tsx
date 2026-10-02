@@ -199,7 +199,7 @@ export default function AbroadLeadForm({ isOpen, onClose, initialCountry }: Abro
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 30 }}
         transition={{ type: "spring", stiffness: 350, damping: 28 }}
-        className="relative w-full max-w-2xl bg-gradient-to-br from-[#0a291b] to-[#0b2b1d] border-2 border-[#cbf341]/30 rounded-3xl shadow-2xl shadow-[#cbf341]/25 max-h-[calc(100vh-2rem)] overflow-hidden z-10 flex flex-col"
+        className="relative w-full max-w-2xl bg-gradient-to-br from-[#0a291b] to-[#0b2b1d] border-2 border-[#cbf341]/30 rounded-3xl shadow-2xl shadow-[#cbf341]/25 max-h-[calc(100dvh-2rem)] overflow-hidden z-10 flex flex-col"
       >
         {/* ── Header ── */}
         <div className="px-5 sm:px-7 pt-5 sm:pt-6 pb-3 sm:pb-4 border-b border-[#cbf341]/20 flex items-start justify-between gap-3">
@@ -208,7 +208,7 @@ export default function AbroadLeadForm({ isOpen, onClose, initialCountry }: Abro
               id="abroad-lead-form-title"
               className="font-display font-bold text-base sm:text-lg text-white flex items-center gap-2"
             >
-              <span className="truncate">
+              <span className="leading-tight">
                 {isSubmitted ? "Submission Complete" : "Free Study Abroad Consultation"}
               </span>
             </h3>

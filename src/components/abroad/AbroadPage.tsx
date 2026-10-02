@@ -121,13 +121,13 @@ export default function AbroadPage({ logoTitle, logoSubtitle, copyright }: Abroa
           <div className={`flex items-center justify-between transition-all duration-300 ${scrolled ? "h-16" : "h-20"}`}>
             <Link
               href="/"
-              className="flex items-center gap-2 sm:gap-2.5 group shrink-0"
+              className="flex items-center gap-2 sm:gap-2.5 group min-w-0"
               aria-label="Back to home"
             >
               <BrandMark title={logoTitle} subtitle={logoSubtitle} titleClassName="font-display" />
             </Link>
 
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0 ml-2">
               <Link
                 href="/"
                 className="hidden sm:inline-flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-full border border-white/10 hover:border-[#cbf341]/30 text-zinc-300 hover:text-[#cbf341] text-xs font-semibold tracking-wide transition-all"
@@ -146,11 +146,14 @@ export default function AbroadPage({ logoTitle, logoSubtitle, copyright }: Abroa
               <button
                 type="button"
                 onClick={openBookingModal}
-                className="px-4 sm:px-6 py-2.5 sm:py-3 rounded-full bg-[#cbf341] hover:bg-[#b2d932] text-[#061910] font-bold text-xs sm:text-[13px] tracking-wider flex items-center gap-2 shadow-lg shadow-[#cbf341]/10 transition-all duration-200 cursor-pointer"
+                aria-label="Book Free Counseling"
+                className="px-3.5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-[#cbf341] hover:bg-[#b2d932] text-[#061910] font-bold text-xs sm:text-[13px] tracking-wider whitespace-nowrap flex items-center gap-2 shadow-lg shadow-[#cbf341]/10 transition-all duration-200 cursor-pointer"
               >
+                {/* The full label only fits beside the logo from sm up; the smallest phones get the icon alone. */}
                 <Phone size={14} className="fill-current sm:hidden" />
                 <Phone size={15} className="fill-current hidden sm:inline" />
-                <span>Book Free Counseling</span>
+                <span className="hidden min-[360px]:inline sm:hidden">Book</span>
+                <span className="hidden sm:inline">Book Free Counseling</span>
               </button>
             </div>
           </div>
@@ -307,7 +310,7 @@ export default function AbroadPage({ logoTitle, logoSubtitle, copyright }: Abroa
                 initial={{ opacity: 0, y: -10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0a291b] border border-[#cbf341]/25 text-[#cbf341] text-[8px] sm:text-[10px] lg:text-xs font-semibold uppercase tracking-widest mb-4"
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0a291b] border border-[#cbf341]/25 text-[#cbf341] text-[10px] lg:text-xs font-semibold uppercase tracking-widest mb-4"
               >
                 <Globe size={12} />
                 <span>Top Destinations</span>
@@ -348,12 +351,13 @@ export default function AbroadPage({ logoTitle, logoSubtitle, copyright }: Abroa
                   whileHover={{ y: -4, scale: 1.015 }}
                   whileTap={{ scale: 0.97 }}
                   aria-label={`Apply to study in ${c.name}`}
-                  className="group relative text-left bg-gradient-to-br from-[#0a2618] to-[#072418] border border-white/5 hover:border-[#cbf341]/40 rounded-2xl p-5 sm:p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-[#cbf341]/15 cursor-pointer overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-[#cbf341]/50"
+                  className="group relative text-left bg-gradient-to-br from-[#0a2618] to-[#072418] border border-white/5 hover:border-[#cbf341]/40 rounded-2xl p-4 sm:p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-[#cbf341]/15 cursor-pointer overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-[#cbf341]/50"
                 >
                   {/* Hover glow accent */}
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(203,243,65,0.08)_0%,transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-                  <div className="relative z-10 flex items-center gap-3 mb-4">
+                  {/* Flag sits above the name until the card is wide enough for both side by side. */}
+                  <div className="relative z-10 flex flex-col items-start xl:flex-row xl:items-center gap-3 mb-4">
                     <div className="w-12 h-8 sm:w-14 sm:h-9 overflow-hidden rounded-md border border-white/10 shadow-sm shrink-0 group-hover:border-[#cbf341]/30 transition-colors">
                       <Image
                         src={`https://flagcdn.com/w80/${c.code}.png`}
@@ -363,11 +367,11 @@ export default function AbroadPage({ logoTitle, logoSubtitle, copyright }: Abroa
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <h3 className="font-display font-bold text-white text-sm sm:text-base leading-tight truncate group-hover:text-[#cbf341] transition-colors">
+                    <div className="min-w-0 xl:flex-1">
+                      <h3 className="font-display font-bold text-white text-sm sm:text-base leading-tight group-hover:text-[#cbf341] transition-colors">
                         {c.name}
                       </h3>
-                      <p className="text-[10px] sm:text-xs text-zinc-400 truncate">{c.tagline}</p>
+                      <p className="text-[10px] sm:text-xs text-zinc-400 leading-snug mt-0.5">{c.tagline}</p>
                     </div>
                   </div>
                   <div className="relative z-10 flex items-center gap-1.5 text-[#cbf341] text-[11px] sm:text-xs font-semibold opacity-70 group-hover:opacity-100 transition-opacity">
@@ -397,7 +401,7 @@ export default function AbroadPage({ logoTitle, logoSubtitle, copyright }: Abroa
                 initial={{ opacity: 0, y: -10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0a291b] border border-[#cbf341]/25 text-[#cbf341] text-[8px] sm:text-[10px] lg:text-xs font-semibold uppercase tracking-widest mb-4"
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0a291b] border border-[#cbf341]/25 text-[#cbf341] text-[10px] lg:text-xs font-semibold uppercase tracking-widest mb-4"
               >
                 <Briefcase size={12} />
                 <span>What We Offer</span>
@@ -472,7 +476,7 @@ export default function AbroadPage({ logoTitle, logoSubtitle, copyright }: Abroa
                 initial={{ opacity: 0, y: -10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0a291b] border border-[#cbf341]/25 text-[#cbf341] text-[8px] sm:text-[10px] lg:text-xs font-semibold uppercase tracking-widest mb-4"
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0a291b] border border-[#cbf341]/25 text-[#cbf341] text-[10px] lg:text-xs font-semibold uppercase tracking-widest mb-4"
               >
                 <Target size={12} />
                 <span>Why Choose Us</span>
@@ -562,7 +566,7 @@ export default function AbroadPage({ logoTitle, logoSubtitle, copyright }: Abroa
                 initial={{ opacity: 0, y: -10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0a291b] border border-[#cbf341]/25 text-[#cbf341] text-[8px] sm:text-[10px] lg:text-xs font-semibold uppercase tracking-widest mb-4"
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0a291b] border border-[#cbf341]/25 text-[#cbf341] text-[10px] lg:text-xs font-semibold uppercase tracking-widest mb-4"
               >
                 <Award size={12} />
                 <span>Proven Results</span>
@@ -726,7 +730,7 @@ export default function AbroadPage({ logoTitle, logoSubtitle, copyright }: Abroa
 
             <Link
               href="/"
-              className="inline-flex items-center gap-1.5 text-zinc-300 hover:text-[#cbf341] text-xs sm:text-sm font-semibold transition-colors"
+              className="inline-flex items-center gap-1.5 py-2 text-zinc-300 hover:text-[#cbf341] text-xs sm:text-sm font-semibold transition-colors"
             >
               <ArrowLeft size={13} />
               <span>Back to Home</span>

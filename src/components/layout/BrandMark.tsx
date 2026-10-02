@@ -24,7 +24,7 @@ export default function BrandMark({ title, subtitle, className = "", titleClassN
           {title}
         </span>
         {subtitle && (
-          <span className="font-sans text-[6px] sm:text-[7px] font-bold tracking-[0.2em] text-white/70 uppercase leading-none mt-1 truncate">
+          <span className="font-sans text-[8px] sm:text-[9px] font-bold tracking-[0.2em] text-white/70 uppercase leading-none mt-1 truncate">
             {subtitle}
           </span>
         )}

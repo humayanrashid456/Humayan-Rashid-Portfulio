@@ -117,20 +117,20 @@ export default function Navbar({ logoTitle, logoSubtitle }: NavbarProps) {
             id="nav-logo"
             href="/"
             onClick={closeMenus}
-            className="flex items-center gap-2 sm:gap-2.5 group shrink-0 min-w-0"
+            className="flex items-center gap-2 sm:gap-2.5 group min-w-0"
             aria-label={`${logoTitle}, home`}
           >
             <BrandMark title={logoTitle} subtitle={logoSubtitle} />
           </Link>
 
           {/* Desktop Navigation Link Pills */}
-          <nav id="desktop-nav" className="hidden md:flex items-center gap-1">
+          <nav id="desktop-nav" className="hidden lg:flex items-center gap-1">
             <div className="bg-[#122e20]/65 border border-white/5 backdrop-blur-md rounded-2xl px-6 py-3 flex items-center gap-4.5 shadow-md">
               {MENU_ITEMS.map((item, index) => {
                 const isActive = isItemActive(pathname, item);
                 const hasDropdown = !!item.dropdownItems;
                 const isOpenDD = openDropdown === item.label && hasDropdown;
-                const className = `text-xs sm:text-[13px] font-semibold tracking-wide transition-colors flex items-center gap-1 duration-200 cursor-pointer ${
+                const className = `text-xs sm:text-[13px] font-semibold tracking-wide whitespace-nowrap transition-colors flex items-center gap-1 duration-200 cursor-pointer ${
                   isActive ? "text-[#cbf341] font-bold" : "text-white/80 hover:text-[#cbf341]"
                 }`;
                 const content = (
@@ -220,7 +220,7 @@ export default function Navbar({ logoTitle, logoSubtitle }: NavbarProps) {
           </nav>
 
           {/* Desktop Actions bar */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-3">
             <button
               onClick={toggleTheme}
               className="p-2.5 rounded-full border border-[#cbf341]/25 bg-[#0a291b] hover:bg-[#0b2b1d] text-[#cbf341] cursor-pointer transition-colors"
@@ -241,7 +241,7 @@ export default function Navbar({ logoTitle, logoSubtitle }: NavbarProps) {
           </div>
 
           {/* Mobile Controls */}
-          <div className="flex items-center gap-1.5 md:hidden">
+          <div className="flex items-center gap-1.5 lg:hidden shrink-0 ml-2">
             <button
               id="mobile-theme-toggle"
               onClick={toggleTheme}
@@ -275,9 +275,9 @@ export default function Navbar({ logoTitle, logoSubtitle }: NavbarProps) {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="md:hidden bg-gradient-to-br from-[#061910] to-[#0b2b1d] border-b border-[#cbf341]/20 overflow-hidden shadow-2xl backdrop-blur-xl"
+            className="lg:hidden bg-gradient-to-br from-[#061910] to-[#0b2b1d] border-b border-[#cbf341]/20 overflow-hidden shadow-2xl backdrop-blur-xl"
           >
-            <div className="px-4 sm:px-5 py-6 flex flex-col gap-4 max-h-[calc(100vh-80px)] overflow-y-auto">
+            <div className="px-4 sm:px-5 py-6 flex flex-col gap-4 max-h-[calc(100dvh-80px)] overflow-y-auto">
               <div className="flex flex-col gap-1 font-display">
                 {MENU_ITEMS.map((item, index) => {
                   const isActive = isItemActive(pathname, item);

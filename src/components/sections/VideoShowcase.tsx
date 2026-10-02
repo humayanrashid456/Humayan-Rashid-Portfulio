@@ -238,7 +238,7 @@ export default function VideoShowcase({ heading, videos, youtubeChannelUrl, view
 
                       {/* Metadata text lines */}
                       <div className="flex-grow min-w-0">
-                        <h4 className={`text-xs font-bold leading-snug truncate ${
+                        <h4 className={`text-xs font-bold leading-snug line-clamp-2 ${
                           isSelected ? "text-[#cbf341]" : "text-white"
                         }`}>
                           {vid.title}

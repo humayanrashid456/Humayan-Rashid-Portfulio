@@ -78,11 +78,11 @@ const SOCIAL_ICONS: { key: keyof SiteSettingsData["social"]; label: string; icon
 
 function ContactItem({ icon, label, children }: { icon: ReactNode; label: string; children: ReactNode }) {
   return (
-    <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-center sm:text-left lg:border-r last:lg:border-r-0 border-white/10 lg:px-6 min-w-0">
+    <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 text-center sm:text-left xl:border-r last:xl:border-r-0 border-white/10 xl:px-4 2xl:px-6 min-w-0 xl:flex-1">
       <div className="w-9 h-9 rounded-lg border border-[#cbf341]/30 flex items-center justify-center text-[#cbf341] shrink-0 bg-[#0a291b]/30">
         {icon}
       </div>
-      <div className="flex flex-col gap-0.5 min-w-0 overflow-hidden">
+      <div className="flex flex-col gap-1 min-w-0">
         <span className="text-[10px] sm:text-[11px] text-zinc-300 font-medium leading-none">{label}</span>
         {children}
       </div>
@@ -93,7 +93,7 @@ function ContactItem({ icon, label, children }: { icon: ReactNode; label: string
 export default function Footer({ settings }: { settings: SiteSettingsData }) {
   const { brand, contact, social, footer } = settings;
   const valueClass =
-    "font-display text-xs sm:text-sm font-bold text-white hover:text-[#cbf341] transition-colors block leading-tight truncate";
+    "font-display text-xs sm:text-sm font-bold text-white hover:text-[#cbf341] transition-colors block leading-snug [overflow-wrap:anywhere]";
 
   return (
     <footer
@@ -101,19 +101,20 @@ export default function Footer({ settings }: { settings: SiteSettingsData }) {
       className="bg-[#061910] text-white pt-12 sm:pt-16 md:pt-20 pb-10 sm:pb-12 md:pb-16 relative overflow-visible px-0"
     >
       <div className="w-[92%] sm:w-[85%] lg:w-[80%] mx-auto relative">
-        {/* Floating Contact Bar */}
+        {/* Floating Contact Bar: one overlapping row from xl up; below that the
+            four cells don't fit side by side, so it stays in flow as a grid. */}
         <div
           id="floating-contact-bar"
-          className="relative lg:absolute -mb-8 lg:mb-0 lg:-top-[60px] lg:left-1/2 lg:-translate-x-1/2 w-full lg:w-[95%] xl:w-[90%] z-20 bg-[#214332] rounded-3xl py-6 px-5 sm:px-8 lg:px-10 shadow-xl border border-white/5"
+          className="relative xl:absolute -mb-8 xl:mb-0 xl:-top-[60px] xl:left-1/2 xl:-translate-x-1/2 w-full xl:w-[96%] z-20 bg-[#214332] rounded-3xl py-6 px-5 sm:px-8 xl:px-8 shadow-xl border border-white/5"
         >
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 lg:gap-4 items-center">
-            <div className="col-span-1 sm:col-span-2 lg:col-span-1 flex items-center justify-center lg:justify-start lg:border-r border-white/10 pb-5 lg:pb-0 lg:pr-6 border-b lg:border-b-0">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:flex gap-5 sm:gap-6 xl:gap-4 items-center">
+            <div className="col-span-1 sm:col-span-2 xl:col-span-1 flex items-center justify-center xl:justify-start xl:border-r border-white/10 pb-5 xl:pb-0 xl:pr-6 border-b xl:border-b-0 min-w-0 xl:shrink-0">
               <BrandMark title={brand.logoTitle || brand.name} subtitle={brand.logoSubtitle} titleClassName="!text-xl" />
             </div>
 
             {contact.phone && (
               <ContactItem icon={<Phone size={16} strokeWidth={2} />} label="Call Us On">
-                <a href={`tel:${contact.phone.replace(/[^\d+]/g, "")}`} className={valueClass} title={contact.phone}>
+                <a href={`tel:${contact.phone.replace(/[^\d+]/g, "")}`} className={valueClass}>
                   {contact.phone}
                 </a>
               </ContactItem>
@@ -121,7 +122,7 @@ export default function Footer({ settings }: { settings: SiteSettingsData }) {
 
             {contact.email && (
               <ContactItem icon={<Mail size={16} strokeWidth={2} />} label="Email Us">
-                <a href={`mailto:${contact.email}`} className={valueClass} title={contact.email}>
+                <a href={`mailto:${contact.email}`} className={valueClass}>
                   {contact.email}
                 </a>
               </ContactItem>
@@ -129,7 +130,7 @@ export default function Footer({ settings }: { settings: SiteSettingsData }) {
 
             {contact.address && (
               <ContactItem icon={<MapPin size={16} strokeWidth={2} />} label="Our Address">
-                <span className="font-display text-xs sm:text-sm font-bold text-white block leading-tight truncate" title={contact.address}>
+                <span className="font-display text-xs sm:text-sm font-bold text-white block leading-snug [overflow-wrap:anywhere]">
                   {contact.address}
                 </span>
               </ContactItem>
@@ -140,7 +141,7 @@ export default function Footer({ settings }: { settings: SiteSettingsData }) {
         {/* Main Footer Container */}
         <div
           id="main-footer-card"
-          className="bg-gradient-to-b from-[#0b2e24] to-[#133c31] border border-white/10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] pt-20 sm:pt-24 lg:pt-28 pb-8 sm:pb-10 px-5 sm:px-8 md:px-10 lg:px-16 shadow-2xl relative z-10 min-h-[350px] flex flex-col justify-between"
+          className="bg-gradient-to-b from-[#0b2e24] to-[#133c31] border border-white/10 rounded-2xl sm:rounded-3xl lg:rounded-[32px] pt-20 sm:pt-24 xl:pt-28 pb-8 sm:pb-10 px-5 sm:px-8 md:px-10 lg:px-16 shadow-2xl relative z-10 min-h-[350px] flex flex-col justify-between"
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-8 pb-10 sm:pb-12 border-b border-white/10">
             {/* Left: call to action & socials */}
